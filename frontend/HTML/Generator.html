@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGuard | Generator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/frontend/CSS/Generator.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="logo"><i data-lucide="zap"></i></div>
+            <div>
+                <h2>PowerGuard</h2>
+                <small>Monitor. Compare. Save.</small>
+            </div>
+        </div>
+
+        <nav class="navigation">
+            <a href="Dashbroad.html"><i data-lucide="house"></i><span>Overview</span></a>
+            <a href="Expense.html"><i data-lucide="receipt-text"></i><span>Expenses</span></a>
+            <a href="Generator.html" class="active"><i data-lucide="plug-zap"></i><span>Generator</span></a>
+            <a href="Battery.html"><i data-lucide="battery-charging"></i><span>Battery</span></a>
+            <a href="Compare.html"><i data-lucide="scale"></i><span>Compare</span></a>
+            <a href="Setting.html"><i data-lucide="settings"></i><span>Settings</span></a>
+        </nav>
+
+        <div class="side-promo">
+            <div class="promo-art">
+                <i data-lucide="leaf"></i>
+                <i data-lucide="plug-zap"></i>
+            </div>
+
+            <h3>Smarter Energy<br>for a Stronger<br>Business</h3>
+
+            <button type="button">Upgrade Plan <i data-lucide="arrow-right"></i></button>
+        </div>
+
+        <div class="help-card">
+            <i data-lucide="circle-help"></i>
+            <div>
+                <strong>Need Help?</strong>
+                <small>Get support</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+        <!-- NAVBAR -->
+        <header class="navbar">
+
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="search" id="searchInput" placeholder="Search anything...">
+            </div>
+
+            <div class="user-area">
+
+                <button class="notification" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span></span>
+                </button>
+
+                <!-- Filled from the logged-in user -->
+                <div class="avatar" id="profileAvatar">U</div>
+
+                <div class="user-info">
+                    <strong id="profileName">Your Name</strong>
+                    <small id="profileBusiness">Set up your business</small>
+                </div>
+
+                <i data-lucide="chevron-down" class="chevron"></i>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- PAGE TITLE + ILLUSTRATION -->
+            <section class="page-heading">
+
+                <div class="heading-copy">
+                    <span class="heading-badge">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="2.5" y="5" width="19" height="12" rx="2.2"/>
+                            <path d="M6.5 17v2.5M17.5 17v2.5M6 9h5M6 12.5h5"/>
+                            <circle cx="16" cy="10.5" r="1.7"/>
+                            <path d="M7 5V3.5M17 5V3.5"/>
+                        </svg>
+                    </span>
+
+                    <div>
+                        <h1>Generator</h1>
+                        <p>Track generator usage and estimate operating costs</p>
+                    </div>
+                </div>
+
+                <!-- faint generator illustration (decorative) -->
+                <svg class="banner-art" viewBox="0 0 440 130" aria-hidden="true" preserveAspectRatio="xMaxYMid meet">
+                    <ellipse cx="60" cy="112" rx="38" ry="6" fill="#cfe8d2" opacity=".6"/>
+                    <circle cx="52" cy="76" r="16" fill="#bfe2c4" opacity=".7"/>
+                    <circle cx="70" cy="68" r="12" fill="#cbe9cf" opacity=".7"/>
+                    <rect x="58" y="80" width="5" height="30" fill="#b7dcbd" opacity=".7"/>
+                    <rect x="120" y="22" width="190" height="84" rx="14" fill="#d3ecd6" opacity=".85"/>
+                    <rect x="130" y="32" width="86" height="60" rx="8" fill="#e3f5e5" opacity=".9"/>
+                    <rect x="228" y="32" width="72" height="60" rx="8" fill="#c4e6c9" opacity=".9"/>
+                    <path d="M142 48h62M142 62h62M142 76h62" stroke="#bfe0c4" stroke-width="5" stroke-linecap="round"/>
+                    <rect x="246" y="48" width="34" height="22" rx="6" fill="#e3f5e5"/>
+                    <rect x="126" y="12" width="178" height="12" rx="6" fill="#c0e3c5" opacity=".9"/>
+                    <circle cx="150" cy="114" r="11" fill="#b4dbba"/>
+                    <circle cx="280" cy="114" r="11" fill="#b4dbba"/>
+                    <circle cx="150" cy="114" r="4.5" fill="#e3f5e5"/>
+                    <circle cx="280" cy="114" r="4.5" fill="#e3f5e5"/>
+                    <path d="M352 18l-26 42h18l-8 30 32-46h-19z" fill="#c8e7cc" opacity=".9"/>
+                    <path d="M0 116h440" stroke="#d6ecd9" stroke-width="3"/>
+                </svg>
+
+                <div class="date-filter">
+                    <i data-lucide="calendar-days"></i>
+
+                    <select id="periodFilter" aria-label="Date range">
+                        <option value="30d">Last 30 Days</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+
+            </section>
+
+
+            <!-- SHOWN WHEN THE USER DID NOT CHOOSE A GENERATOR AT SETUP -->
+            <section class="not-enabled" id="notEnabled" hidden>
+                <i data-lucide="plug-zap"></i>
+                <h2>Generator tracking isn't switched on</h2>
+                <p>You didn't select a generator as a power source for your business.
+                   Add it in Settings to start tracking fuel, runtime and costs.</p>
+                <a href="settings.html" class="primary-link">
+                    Update power sources <i data-lucide="arrow-right"></i>
+                </a>
+            </section>
+
+
+            <div id="generatorContent">
+
+                <!-- SUMMARY CARDS -->
+                <section class="summary-cards">
+
+                    <article class="summary-card">
+                        <div class="summary-icon"><i data-lucide="fuel"></i></div>
+                        <div class="summary-details">
+                            <p>Total Fuel Used</p>
+                            <h2 id="fuelTotal">0 Litres</h2>
+                            <small id="fuelChange" class="no-data">No data yet</small>
+                        </div>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-icon"><i data-lucide="clock-3"></i></div>
+                        <div class="summary-details">
+                            <p>Total Runtime</p>
+                            <h2 id="runtimeTotal">0 Hours</h2>
+                            <small id="runtimeChange" class="no-data">No data yet</small>
+                        </div>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-icon"><span class="naira">₦</span></div>
+                        <div class="summary-details">
+                            <p>Estimated Cost/Hour</p>
+                            <h2 id="costHourTotal">₦0</h2>
+                            <small id="costHourChange" class="no-data">No data yet</small>
+                        </div>
+                        <i data-lucide="info" class="card-info" title="Total generator spend divided by total hours run"></i>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-icon"><i data-lucide="fuel"></i></div>
+                        <div class="summary-details">
+                            <p>Total Generator Spend</p>
+                            <h2 id="spendTotal">₦0</h2>
+                            <small id="spendChange" class="no-data">No data yet</small>
+                        </div>
+                    </article>
+
+                </section>
+
+
+                <!-- TWO COLUMNS -->
+                <section class="gen-layout">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="gen-column">
+
+                        <!-- RECORD SESSION -->
+                        <div class="panel record-panel">
+
+                            <div class="section-heading">
+                                <span class="heading-icon add-icon"><i data-lucide="plus"></i></span>
+                                <div>
+                                    <h2>Record Generator Session</h2>
+                                    <p>Add a new generator usage record to track your costs.</p>
+                                </div>
+                            </div>
+
+                            <form id="sessionForm">
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+                                        <label for="sessionDate">Date</label>
+                                        <div class="field">
+                                            <i data-lucide="calendar-days" class="field-icon"></i>
+                                            <input type="date" id="sessionDate" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="fuelType">Fuel Type</label>
+                                        <div class="field select-field">
+                                            <i data-lucide="droplet" class="field-icon"></i>
+                                            <select id="fuelType" required>
+                                                <option value="Petrol">Petrol</option>
+                                                <option value="Diesel">Diesel</option>
+                                            </select>
+                                            <i data-lucide="chevron-down" class="select-chevron"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="fuelUsed">Fuel Consumed (Litres)</label>
+                                        <div class="field">
+                                            <i data-lucide="fuel" class="field-icon"></i>
+                                            <input type="number" id="fuelUsed" min="0.1" step="0.1" placeholder="e.g. 5" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="runtime">Runtime (Hours)</label>
+                                        <div class="field">
+                                            <i data-lucide="clock-3" class="field-icon"></i>
+                                            <input type="number" id="runtime" min="0.1" step="0.1" placeholder="e.g. 3" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="fuelPrice">Fuel Price per Litre (₦)</label>
+                                        <div class="field">
+                                            <span class="field-icon naira">₦</span>
+                                            <input type="number" id="fuelPrice" min="1" step="1" placeholder="e.g. 1,000" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <button type="submit" class="save-btn" id="saveBtn">
+                                    <i data-lucide="save"></i>
+                                    Save Session
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
+                        <!-- SESSION HISTORY -->
+                        <div class="panel history-panel">
+
+                            <div class="history-heading">
+                                <h2><span class="list-icon"><i data-lucide="list"></i></span> Generator Session History</h2>
+                                <a href="#" id="viewAllBtn" hidden>View All →</a>
+                            </div>
+
+                            <div class="table-wrapper">
+
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Fuel Type</th>
+                                            <th>Fuel Used</th>
+                                            <th>Runtime</th>
+                                            <th>Cost/Hour</th>
+                                            <th class="center">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <!-- rows are created by the JS from backend data -->
+                                    <tbody id="sessionTable"></tbody>
+                                </table>
+
+                                <div class="empty-state" id="emptyState">
+                                    <i data-lucide="plug-zap"></i>
+                                    <h3 id="emptyTitle">No sessions yet</h3>
+                                    <p id="emptyText">Record your first generator session to see it here.</p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="gen-column">
+
+                        <!-- COST ESTIMATOR (calculated in the browser) -->
+                        <div class="panel estimator-panel">
+
+                            <div class="section-heading">
+                                <span class="heading-icon calc-icon"><i data-lucide="calculator"></i></span>
+                                <div>
+                                    <h2>Generator Cost Estimator</h2>
+                                    <p>Calculate the cost of running your generator per hour.</p>
+                                </div>
+                            </div>
+
+                            <form id="estimatorForm">
+
+                                <div class="estimator-grid">
+
+                                    <div class="form-group">
+                                        <label for="estLitres">Fuel Consumption (Litres/Hour)</label>
+                                        <div class="field">
+                                            <i data-lucide="fuel" class="field-icon"></i>
+                                            <input type="number" id="estLitres" min="0.1" step="0.1" placeholder="e.g. 1.5" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="estPrice">Fuel Price per Litre (₦)</label>
+                                        <div class="field">
+                                            <span class="field-icon naira">₦</span>
+                                            <input type="number" id="estPrice" min="1" step="1" placeholder="e.g. 1,000" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <button type="submit" class="save-btn calc-btn">
+                                    <i data-lucide="calculator"></i>
+                                    Calculate Cost
+                                </button>
+
+                            </form>
+
+                            <div class="estimate-result">
+                                <span class="check-circle"><i data-lucide="check"></i></span>
+
+                                <div>
+                                    <small>Estimated Generator Cost</small>
+                                    <h3><strong id="estResult">₦0</strong> <span>/ hour</span></h3>
+                                    <p id="estNote"><i data-lucide="droplet"></i> Enter your figures above, then press Calculate.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- KEY INSIGHTS -->
+                        <div class="panel insights-panel">
+
+                            <div class="insights-heading">
+                                <h2><i data-lucide="lightbulb"></i> Key Insights</h2>
+                            </div>
+
+                            <div class="insights-body">
+
+                                <div class="insight-list">
+
+                                    <div class="insight">
+                                        <span class="insight-icon"><i data-lucide="trending-up"></i></span>
+                                        <p>
+                                            <small>Your generator costs</small>
+                                            <strong id="insCostHour">—</strong>
+                                            <em>(average)</em>
+                                        </p>
+                                    </div>
+
+                                    <div class="insight">
+                                        <span class="insight-icon"><i data-lucide="droplet"></i></span>
+                                        <p>
+                                            <small>You used <b id="insLitres">0 Litres</b></small>
+                                            <em id="insPeriod">in the last 30 days</em>
+                                        </p>
+                                    </div>
+
+                                    <div class="insight">
+                                        <span class="insight-icon"><i data-lucide="wallet"></i></span>
+                                        <p>
+                                            <small>Total spent on generator fuel</small>
+                                            <strong id="insSpend">₦0</strong>
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <div class="insight-art" aria-hidden="true">
+                                    <svg viewBox="0 0 150 120">
+                                        <path d="M6 62c34-8 64-24 112-56" fill="none" stroke="#b7e0bd" stroke-width="3" stroke-linecap="round"/>
+                                        <path d="M104 4h16v16" fill="none" stroke="#9ad3a3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <rect x="2" y="80" width="26" height="38" rx="3" fill="#bfe5c5"/>
+                                        <rect x="34" y="68" width="26" height="50" rx="3" fill="#aedcb5"/>
+                                        <rect x="66" y="52" width="26" height="66" rx="3" fill="#9bd4a4"/>
+                                        <rect x="98" y="34" width="26" height="84" rx="3" fill="#86cb91"/>
+                                        <rect x="130" y="22" width="20" height="96" rx="3" fill="#6fc07d"/>
+                                    </svg>
+                                    <div class="art-bubble">Keep tracking to manage costs better!</div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <p class="footer-note">
+                PowerGuard · Smarter energy management for your business.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- NOTIFICATION MESSAGE -->
+<div class="toast" id="toast"></div>
+
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+
+        <button class="modal-close" id="modalClose" aria-label="Close">
+            <i data-lucide="x"></i>
+        </button>
+
+        <h2 id="modalTitle">Session Details</h2>
+
+        <div id="modalContent"></div>
+
+        <button class="modal-done" id="modalDone">Close</button>
+
+    </div>
+</div>
+
+
+<script src="/frontend/JS/Generator.js"></script>
+
+</body>
+</html>

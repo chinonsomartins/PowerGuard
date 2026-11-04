@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGuard | Compare</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/frontend/CSS/Compare.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="logo"><i data-lucide="zap"></i></div>
+            <div>
+                <h2>PowerGuard</h2>
+                <small>Monitor. Compare. Save.</small>
+            </div>
+        </div>
+
+        <nav class="navigation">
+            <a href="Dashbroad.html"><i data-lucide="house"></i><span>Overview</span></a>
+            <a href="Expense.html"><i data-lucide="receipt-text"></i><span>Expenses</span></a>
+            <a href="Generator.html"><i data-lucide="plug-zap"></i><span>Generator</span></a>
+            <a href="Battery.html"><i data-lucide="battery-charging"></i><span>Battery</span></a>
+            <a href="Compare.html" class="active"><i data-lucide="scale"></i><span>Compare</span></a>
+            <a href="Setting.html"><i data-lucide="settings"></i><span>Settings</span></a>
+        </nav>
+
+        <div class="side-promo">
+            <div class="promo-art">
+                <i data-lucide="scale"></i>
+                <i data-lucide="leaf"></i>
+            </div>
+
+            <h3>Make Smarter<br>Power Decisions</h3>
+            <p>Compare options and choose what works best for your business.</p>
+
+            <button type="button">Upgrade Plan <i data-lucide="arrow-right"></i></button>
+        </div>
+
+        <div class="help-card">
+            <i data-lucide="circle-help"></i>
+            <div>
+                <strong>Need Help?</strong>
+                <small>Get support</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+        <!-- NAVBAR -->
+        <header class="navbar">
+
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search anything...">
+            </div>
+
+            <div class="user-area">
+
+                <button class="notification" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span></span>
+                </button>
+
+                <!-- Filled from the logged-in user -->
+                <div class="avatar" id="profileAvatar">U</div>
+
+                <div class="user-info">
+                    <strong id="profileName">Your Name</strong>
+                    <small id="profileBusiness">Set up your business</small>
+                </div>
+
+                <i data-lucide="chevron-down" class="chevron"></i>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- PAGE TITLE + ILLUSTRATION -->
+            <section class="page-heading">
+
+                <div class="heading-copy">
+                    <span class="heading-badge"><i data-lucide="scale"></i></span>
+
+                    <div>
+                        <h1>Compare Power Options</h1>
+                        <p>Understand which available option may be more economical for your next power outage.</p>
+                    </div>
+                </div>
+
+                <!-- faint city + battery/generator illustration (decorative) -->
+                <svg class="banner-art" viewBox="0 0 460 130" aria-hidden="true" preserveAspectRatio="xMaxYMid meet">
+                    <rect x="20" y="44" width="46" height="74" rx="4" fill="#d4ebd7" opacity=".75"/>
+                    <rect x="30" y="56" width="26" height="6" rx="2" fill="#e8f6ea"/>
+                    <rect x="30" y="70" width="26" height="6" rx="2" fill="#e8f6ea"/>
+                    <rect x="30" y="84" width="26" height="6" rx="2" fill="#e8f6ea"/>
+                    <rect x="76" y="62" width="36" height="56" rx="4" fill="#cde8d1" opacity=".7"/>
+                    <circle cx="140" cy="62" r="17" fill="#c3e4c8" opacity=".85"/>
+                    <circle cx="140" cy="48" r="11" fill="#cfe9d3" opacity=".85"/>
+                    <rect x="137" y="70" width="6" height="48" fill="#b7dcbd" opacity=".8"/>
+                    <rect x="176" y="22" width="112" height="92" rx="16" fill="#8ed39a"/>
+                    <rect x="176" y="22" width="112" height="22" rx="12" fill="#a7e0b0"/>
+                    <rect x="204" y="10" width="56" height="18" rx="6" fill="#74c784"/>
+                    <path d="M240 46l-24 36h17l-7 26 32-42h-18z" fill="#f2fbf3"/>
+                    <rect x="300" y="64" width="38" height="50" rx="8" fill="#a6dcaf"/>
+                    <rect x="306" y="72" width="26" height="14" rx="4" fill="#e1f4e4"/>
+                    <circle cx="312" cy="100" r="4" fill="#e1f4e4"/>
+                    <circle cx="326" cy="100" r="4" fill="#e1f4e4"/>
+                    <rect x="352" y="30" width="46" height="88" rx="4" fill="#d1e9d5" opacity=".8"/>
+                    <rect x="362" y="42" width="26" height="6" rx="2" fill="#e8f6ea"/>
+                    <rect x="362" y="56" width="26" height="6" rx="2" fill="#e8f6ea"/>
+                    <circle cx="424" cy="68" r="16" fill="#b9e0c0" opacity=".85"/>
+                    <rect x="421" y="76" width="6" height="42" fill="#a8d4b0" opacity=".8"/>
+                    <path d="M0 118h460" stroke="#d6ecd9" stroke-width="3"/>
+                </svg>
+
+                <div class="date-filter">
+                    <i data-lucide="calendar-days"></i>
+
+                    <select id="periodFilter" aria-label="Date range">
+                        <option value="30d">Last 30 Days</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+
+            </section>
+
+
+            <!-- SHOWN WHEN THE USER DOES NOT HAVE BOTH A GENERATOR AND AN INVERTER -->
+            <section class="not-enabled" id="notEnabled" hidden>
+                <i data-lucide="scale"></i>
+                <h2>You need two power options to compare</h2>
+                <p>Comparison works between a generator and an inverter / battery. Add the
+                   power source you're missing in Settings to start comparing.</p>
+                <a href="settings.html" class="primary-link">
+                    Update power sources <i data-lucide="arrow-right"></i>
+                </a>
+            </section>
+
+
+            <div id="compareContent">
+
+                <!-- COMPARISON PARAMETERS -->
+                <form class="panel params-card" id="compareForm" novalidate>
+
+                    <div class="params-main">
+
+                        <h2 class="panel-title">
+                            <span class="bolt-badge"><i data-lucide="zap"></i></span>
+                            Comparison Parameters
+                        </h2>
+
+                        <div class="params-grid">
+
+                            <div class="form-group">
+                                <label for="loadWatts">Connected Load (Watts)</label>
+                                <div class="unit-field">
+                                    <span class="lead-icon"><i data-lucide="plug"></i></span>
+                                    <input type="number" id="loadWatts" min="1" step="any" placeholder="e.g. 600" required>
+                                    <span class="unit">W</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="outageHours">Outage Duration</label>
+                                <div class="unit-field">
+                                    <span class="lead-icon"><i data-lucide="clock-3"></i></span>
+                                    <input type="number" id="outageHours" min="0.1" step="any" placeholder="e.g. 4" required>
+                                    <span class="unit wide">hours</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group options-group">
+                                <label>Available Options</label>
+
+                                <label class="check-row" data-source="generator">
+                                    <input type="checkbox" id="optGenerator" checked>
+                                    <span class="box"><i data-lucide="check"></i></span>
+                                    Generator
+                                </label>
+
+                                <label class="check-row" data-source="battery">
+                                    <input type="checkbox" id="optInverter" checked>
+                                    <span class="box"><i data-lucide="check"></i></span>
+                                    Inverter
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="params-action">
+                        <button type="submit" class="run-btn" id="runBtn">
+                            <i data-lucide="scale"></i>
+                            Run Comparison
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+
+                </form>
+
+
+                <!-- COMPARISON RESULT -->
+                <section class="panel result-panel">
+
+                    <h2 class="panel-title result-title">
+                        <span class="title-icon"><i data-lucide="chart-column"></i></span>
+                        Comparison Result
+                    </h2>
+
+                    <div class="versus" id="versus">
+
+                        <!-- GENERATOR -->
+                        <article class="option-card" id="genCard">
+
+                            <header class="option-header">
+                                <span class="option-icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect x="2.5" y="5" width="19" height="12" rx="2.2"/>
+                                        <path d="M6.5 17v2.5M17.5 17v2.5M6 9h5M6 12.5h5"/>
+                                        <circle cx="16" cy="10.5" r="1.7"/>
+                                        <path d="M7 5V3.5M17 5V3.5"/>
+                                    </svg>
+                                </span>
+                                <h3>Generator</h3>
+                                <em class="tag">Reliable</em>
+                            </header>
+
+                            <div class="option-body">
+                                <strong class="big-cost" id="genCost">—</strong>
+                                <p class="cost-label" id="genCostLabel">Estimated Fuel Cost</p>
+
+                                <div class="stat-row">
+                                    <div class="stat">
+                                        <span class="stat-line"><i data-lucide="clock-3"></i> <b id="genRuntime">—</b></span>
+                                        <small>Estimated Runtime</small>
+                                    </div>
+
+                                    <div class="stat">
+                                        <span class="stat-line"><i data-lucide="fuel"></i> <b id="genFuel">—</b></span>
+                                        <small>Fuel Required</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <footer class="assumptions">
+                                <i data-lucide="info"></i>
+                                <div>
+                                    <strong>Assumptions</strong>
+                                    <p id="genAssumptions">Record a generator session to get accurate figures.</p>
+                                </div>
+                            </footer>
+
+                        </article>
+
+
+                        <div class="vs-wrap"><span class="vs-badge">VS</span></div>
+
+
+                        <!-- INVERTER -->
+                        <article class="option-card" id="invCard">
+
+                            <header class="option-header">
+                                <span class="option-icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect x="5" y="4.5" width="14" height="17" rx="2.5"/>
+                                        <path d="M9.5 4.5V2.8h5v1.7M9 11h6M9 14.5h6"/>
+                                    </svg>
+                                </span>
+                                <h3>Inverter</h3>
+                                <em class="tag">Energy Efficient</em>
+                            </header>
+
+                            <div class="option-body">
+                                <strong class="big-cost" id="invCost">—</strong>
+                                <p class="cost-label" id="invCostLabel">Estimated Recharge Cost</p>
+
+                                <div class="stat-row">
+                                    <div class="stat">
+                                        <span class="stat-line"><i data-lucide="clock-3"></i> <b id="invRuntime">—</b></span>
+                                        <small>Estimated Runtime</small>
+                                    </div>
+
+                                    <div class="stat">
+                                        <span class="stat-line"><i data-lucide="battery-full"></i> <b id="invUsage">—</b></span>
+                                        <small>Battery Usage</small>
+                                    </div>
+                                </div>
+
+                                <p class="warning-line" id="invWarning" hidden></p>
+                            </div>
+
+                            <footer class="assumptions">
+                                <i data-lucide="info"></i>
+                                <div>
+                                    <strong>Assumptions</strong>
+                                    <p id="invAssumptions">Save your battery details to get accurate figures.</p>
+                                </div>
+                            </footer>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+                <!-- BOTTOM PANELS -->
+                <section class="bottom-grid">
+
+                    <div class="panel insight-card">
+
+                        <h2 class="panel-title">
+                            <span class="title-icon plain"><i data-lucide="lightbulb"></i></span>
+                            Key Insight
+                        </h2>
+
+                        <div class="insight-box">
+                            <span class="trophy"><i data-lucide="trophy"></i></span>
+                            <p id="insightText">Run a comparison to see which option is more economical for your outage.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel notes-card">
+
+                        <h2 class="panel-title">
+                            <span class="title-icon info-icon"><i data-lucide="info"></i></span>
+                            Important Notes
+                        </h2>
+
+                        <ul class="check-list">
+                            <li><i data-lucide="circle-check"></i> Results are based on the inputs provided and may vary with real conditions.</li>
+                            <li><i data-lucide="circle-check"></i> Ensure your battery is in good health for optimal performance.</li>
+                            <li><i data-lucide="circle-check"></i> Consider both cost and reliability when choosing.</li>
+                        </ul>
+
+                        <svg class="notes-art" viewBox="0 0 90 100" aria-hidden="true">
+                            <path d="M70 96C58 66 62 36 88 8c8 34 0 64-18 88z" fill="#bfe5c5"/>
+                            <path d="M70 96C68 70 74 44 86 20" stroke="#e5f6e7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <path d="M40 98c-4-18 0-34 14-46 4 18-2 34-14 46z" fill="#d3ecd6"/>
+                        </svg>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <p class="footer-note">
+                PowerGuard · Smarter energy management for your business.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- NOTIFICATION MESSAGE -->
+<div class="toast" id="toast"></div>
+
+
+<script src="/frontend/JS/Compare.js"></script>
+
+</body>
+</html>

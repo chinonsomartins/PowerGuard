@@ -1,0 +1,670 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your PowerGuard business settings.">
+    <title>Settings | PowerGuard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/frontend/CSS/Setting.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- MOBILE OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-logo">
+                <i data-lucide="zap"></i>
+            </div>
+
+            <div class="brand-text">
+                <h2>PowerGuard</h2>
+                <p>Monitor. Compare. Save.</p>
+            </div>
+
+            <button class="close-sidebar" id="closeSidebar" aria-label="Close menu">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <nav class="main-navigation">
+
+            <a href="Dashbroad.html" class="nav-link">
+                <i data-lucide="house"></i>
+                <span>Overview</span>
+            </a>
+
+            <a href="Expense.html" class="nav-link">
+                <i data-lucide="receipt-text"></i>
+                <span>Expenses</span>
+            </a>
+
+            <a href="Generator.html" class="nav-link">
+                <i data-lucide="factory"></i>
+                <span>Generator</span>
+            </a>
+
+            <a href="Battery.html" class="nav-link">
+                <i data-lucide="battery-charging"></i>
+                <span>Battery</span>
+            </a>
+
+            <a href="Compare.html" class="nav-link">
+                <i data-lucide="scale"></i>
+                <span>Compare</span>
+            </a>
+
+            <a href="Setting.html" class="nav-link active">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <!-- UPGRADE CARD -->
+        <div class="upgrade-card">
+
+            <div class="upgrade-art">
+                <i data-lucide="leaf"></i>
+                <i data-lucide="zap"></i>
+            </div>
+
+            <h3>Smarter Energy<br>for a Stronger<br>Business</h3>
+
+            <button class="upgrade-button" type="button" disabled>
+                Upgrade Plan
+                <i data-lucide="arrow-right"></i>
+            </button>
+
+        </div>
+
+        <!-- HELP CARD -->
+        <div class="help-card">
+            <i data-lucide="circle-help"></i>
+
+            <div>
+                <h3>Need Help?</h3>
+                <a href="mailto:support@powerguard.com">Get support</a>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP NAVBAR -->
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-button" id="menuBtn" aria-label="Open menu">
+                    <i data-lucide="menu"></i>
+                </button>
+
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="search" placeholder="Search anything..." aria-label="Search">
+                </div>
+
+            </div>
+
+            <div class="navbar-right">
+
+                <button class="notification-button" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="user-profile">
+
+                    <div class="avatar">JD</div>
+
+                    <div class="user-details">
+                        <h4>John Doe</h4>
+                        <p id="navBusiness">Victory Salon</p>
+                    </div>
+
+                    <i data-lucide="chevron-down" class="profile-arrow"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE HEADER -->
+        <section class="page-header">
+
+            <div class="header-content">
+
+                <div class="header-icon">
+                    <i data-lucide="settings"></i>
+                </div>
+
+                <div>
+                    <h1>Settings</h1>
+                    <p>Manage your account, business profile and preferences</p>
+                </div>
+
+            </div>
+
+            <div class="header-decoration">
+                <i data-lucide="leaf"></i>
+                <i data-lucide="zap"></i>
+                <i data-lucide="battery-charging"></i>
+            </div>
+
+        </section>
+
+
+        <!-- SETTINGS WORKSPACE -->
+        <div class="settings-layout">
+
+            <!-- SETTINGS MENU -->
+            <aside class="settings-menu">
+
+                <button class="settings-tab active" data-section="businessSection">
+                    <i data-lucide="user-round"></i>
+                    <span>Business Profile</span>
+                </button>
+
+                <button class="settings-tab" data-section="securitySection">
+                    <i data-lucide="shield-check"></i>
+                    <span>Account Security</span>
+                </button>
+
+                <button class="settings-tab" data-section="notificationsSection">
+                    <i data-lucide="bell"></i>
+                    <span>Notifications</span>
+                </button>
+
+                <button class="settings-tab" data-section="appearanceSection">
+                    <i data-lucide="palette"></i>
+                    <span>Appearance</span>
+                </button>
+
+                <button class="settings-tab" data-section="privacySection">
+                    <i data-lucide="database"></i>
+                    <span>Data & Privacy</span>
+                </button>
+
+                <button class="settings-tab" data-section="aboutSection">
+                    <i data-lucide="info"></i>
+                    <span>About PowerGuard</span>
+                </button>
+
+            </aside>
+
+
+            <!-- SETTINGS CONTENT -->
+            <div class="settings-content">
+
+
+                <!-- BUSINESS PROFILE -->
+                <section class="settings-card business-card" id="businessSection">
+
+                    <div class="card-heading">
+
+                        <div class="heading-left">
+                            <i data-lucide="building-2"></i>
+
+                            <div>
+                                <h2>Business Profile</h2>
+                                <p>Update your business information and power configuration.</p>
+                            </div>
+                        </div>
+
+                        <button class="outline-button" id="editProfileBtn">
+                            <i data-lucide="pencil"></i>
+                            Edit Profile
+                        </button>
+
+                    </div>
+
+                    <div class="business-details">
+
+                        <div class="business-logo">
+                            <i data-lucide="store"></i>
+                        </div>
+
+                        <div class="business-info">
+
+                            <div class="business-name">
+                                <h3 id="displayBusinessName">Victory Salon</h3>
+                                <span class="status-badge">Active</span>
+                            </div>
+
+                            <p>
+                                <i data-lucide="map-pin"></i>
+                                <span id="displayLocation">Awka, Anambra State, Nigeria</span>
+                            </p>
+
+                            <p>
+                                <i data-lucide="briefcase-business"></i>
+                                <span id="displayCategory">Barbing Salon</span>
+                            </p>
+
+                        </div>
+
+                        <div class="power-sources">
+
+                            <h4>Power Sources</h4>
+
+                            <div class="sources-list">
+
+                                <div class="source-item">
+                                    <div class="source-icon">
+                                        <i data-lucide="radio-tower"></i>
+                                    </div>
+                                    <span>Grid Electricity</span>
+                                </div>
+
+                                <i data-lucide="arrow-right" class="source-arrow"></i>
+
+                                <div class="source-item">
+                                    <div class="source-icon">
+                                        <i data-lucide="factory"></i>
+                                    </div>
+                                    <span>Generator</span>
+                                </div>
+
+                                <i data-lucide="arrow-right" class="source-arrow"></i>
+
+                                <div class="source-item">
+                                    <div class="source-icon">
+                                        <i data-lucide="battery-charging"></i>
+                                    </div>
+                                    <span>Inverter</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SECURITY AND NOTIFICATIONS -->
+                <div class="two-column">
+
+                    <!-- ACCOUNT SECURITY -->
+                    <section class="settings-card" id="securitySection">
+
+                        <div class="card-heading">
+
+                            <div class="heading-left">
+                                <i data-lucide="shield-check"></i>
+
+                                <div>
+                                    <h2>Account Security</h2>
+                                    <p>Keep your account safe and secure.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="security-list">
+
+                            <div class="security-item">
+                                <i data-lucide="mail"></i>
+                                <span>Email Address</span>
+                                <strong id="displayEmail">victory.salon@example.com</strong>
+                                <span class="small-action">Verified</span>
+                            </div>
+
+                            <div class="security-item">
+                                <i data-lucide="lock-keyhole"></i>
+                                <span>Password</span>
+                                <strong>••••••••</strong>
+
+                                <button class="small-action" id="changePasswordBtn">
+                                    Change
+                                </button>
+                            </div>
+
+                            <div class="security-item">
+                                <i data-lucide="shield-check"></i>
+                                <span>Two-Factor Authentication</span>
+                                <strong class="not-enabled">Not Enabled</strong>
+
+                                <span class="small-action coming-soon">Coming Soon</span>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- NOTIFICATIONS -->
+                    <section class="settings-card" id="notificationsSection">
+
+                        <div class="card-heading">
+
+                            <div class="heading-left">
+                                <i data-lucide="bell"></i>
+
+                                <div>
+                                    <h2>Notifications</h2>
+                                    <p>Choose how you want to be notified.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="notification-list">
+
+                            <div class="notification-item">
+
+                                <i data-lucide="mail"></i>
+
+                                <span>Email Notifications</span>
+
+                                <label class="switch">
+                                    <input type="checkbox" id="emailToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                            <div class="notification-item">
+
+                                <i data-lucide="bell-ring"></i>
+
+                                <span>In-App Notifications</span>
+
+                                <label class="switch">
+                                    <input type="checkbox" id="appToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="notification-info">
+                            <i data-lucide="info"></i>
+                            <p>Get updates on your energy expenses, calculations and important alerts.</p>
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- APPEARANCE AND PRIVACY -->
+                <div class="two-column bottom-columns">
+
+                    <!-- APPEARANCE -->
+                    <section class="settings-card" id="appearanceSection">
+
+                        <div class="card-heading">
+
+                            <div class="heading-left">
+                                <i data-lucide="palette"></i>
+
+                                <div>
+                                    <h2>Appearance</h2>
+                                    <p>Personalize your dashboard look.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="appearance-row">
+
+                            <span>Theme Mode</span>
+
+                            <div class="theme-options">
+                                <button class="theme-button active" type="button">
+                                    <i data-lucide="sun"></i>
+                                    Light
+                                </button>
+
+                                <button class="theme-button" type="button" disabled>
+                                    <i data-lucide="moon"></i>
+                                    Dark
+                                </button>
+
+                                <button class="theme-button" type="button" disabled>
+                                    <i data-lucide="monitor"></i>
+                                    System
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div class="appearance-row color-row">
+
+                            <span>Primary Color</span>
+
+                            <div class="color-options">
+                                <span class="color-circle selected" style="--swatch:#075329"></span>
+                                <span class="color-circle" style="--swatch:#58A47C"></span>
+                                <span class="color-circle" style="--swatch:#58C66B"></span>
+                                <span class="color-circle" style="--swatch:#91D991"></span>
+                                <span class="color-circle" style="--swatch:#C8EFCB"></span>
+                                <span class="color-circle" style="--swatch:#E5EBE6"></span>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- DATA AND PRIVACY -->
+                    <section class="settings-card" id="privacySection">
+
+                        <div class="card-heading">
+
+                            <div class="heading-left">
+                                <i data-lucide="database"></i>
+
+                                <div>
+                                    <h2>Data & Privacy</h2>
+                                    <p>Manage your data and privacy preferences.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="privacy-item">
+
+                            <div class="privacy-icon">
+                                <i data-lucide="cloud-download"></i>
+                            </div>
+
+                            <div class="privacy-text">
+                                <h3>Export My Data</h3>
+                                <p>Download a copy of your data.</p>
+                            </div>
+
+                            <button class="outline-button disabled-button" type="button" disabled>
+                                <i data-lucide="download"></i>
+                                Export
+                            </button>
+
+                        </div>
+
+                        <div class="privacy-item">
+
+                            <div class="privacy-icon">
+                                <i data-lucide="trash-2"></i>
+                            </div>
+
+                            <div class="privacy-text">
+                                <h3>Delete Account</h3>
+                                <p>Permanently delete your account.</p>
+                            </div>
+
+                            <button class="danger-button" type="button" disabled>
+                                <i data-lucide="trash"></i>
+                                Delete Account
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- ABOUT POWERGUARD -->
+                <section class="settings-card about-card" id="aboutSection">
+
+                    <div class="about-brand">
+                        <i data-lucide="zap"></i>
+
+                        <div>
+                            <h2>PowerGuard</h2>
+                            <p>Monitor. Compare. Save.</p>
+                        </div>
+                    </div>
+
+                    <p class="about-description">
+                        PowerGuard helps small businesses monitor energy expenses,
+                        estimate backup power costs and make smarter energy decisions.
+                    </p>
+
+                    <span class="version-text">PowerGuard M1 · Version 1.0</span>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- EDIT BUSINESS PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+
+    <div class="modal">
+
+        <div class="modal-heading">
+            <div>
+                <h2>Edit Business Profile</h2>
+                <p>Update your business details.</p>
+            </div>
+
+            <button class="modal-close" data-close="profileModal" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <form id="profileForm">
+
+            <label for="businessName">Business Name</label>
+            <input type="text" id="businessName" required>
+
+            <label for="businessLocation">Business Location</label>
+            <input type="text" id="businessLocation" required>
+
+            <label for="businessCategory">Business Category</label>
+            <select id="businessCategory" required>
+                <option value="">Select category</option>
+                <option value="Barbing Salon">Barbing Salon</option>
+                <option value="Beauty Salon">Beauty Salon</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Retail Store">Retail Store</option>
+                <option value="Pharmacy">Pharmacy</option>
+                <option value="Supermarket">Supermarket</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="cancel-button" data-close="profileModal">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button">
+                    Save Changes
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="passwordModal">
+
+    <div class="modal">
+
+        <div class="modal-heading">
+            <div>
+                <h2>Change Password</h2>
+                <p>Enter your current and new password.</p>
+            </div>
+
+            <button class="modal-close" data-close="passwordModal" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <form id="passwordForm">
+
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" required>
+
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" minlength="8" required>
+
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" required>
+
+            <div class="modal-actions">
+
+                <button type="button" class="cancel-button" data-close="passwordModal">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button">
+                    Continue
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST MESSAGE -->
+<div class="toast" id="toast"></div>
+
+
+<!-- JAVASCRIPT -->
+<script src="/frontend/JS/Setting.js"></script>
+
+</body>
+</html>

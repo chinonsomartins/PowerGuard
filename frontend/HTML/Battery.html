@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGuard | Battery</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/frontend/CSS/Battery.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="logo"><i data-lucide="zap"></i></div>
+            <div>
+                <h2>PowerGuard</h2>
+                <small>Monitor. Compare. Save.</small>
+            </div>
+        </div>
+
+        <nav class="navigation">
+            <a href="Dashbroad.html"><i data-lucide="house"></i><span>Overview</span></a>
+            <a href="Expense.html"><i data-lucide="receipt-text"></i><span>Expenses</span></a>
+            <a href="Generator.html"><i data-lucide="plug-zap"></i><span>Generator</span></a>
+            <a href="Battery.html" class="active"><i data-lucide="battery-charging"></i><span>Battery</span></a>
+            <a href="Compare.html"><i data-lucide="scale"></i><span>Compare</span></a>
+            <a href="Settings.html"><i data-lucide="settings"></i><span>Settings</span></a>
+        </nav>
+
+        <div class="side-promo">
+            <div class="promo-art">
+                <i data-lucide="leaf"></i>
+                <i data-lucide="battery-charging"></i>
+            </div>
+
+            <h3>Smarter Energy<br>for a Stronger<br>Business</h3>
+
+            <button type="button">Upgrade Plan <i data-lucide="arrow-right"></i></button>
+        </div>
+
+        <div class="help-card">
+            <i data-lucide="circle-help"></i>
+            <div>
+                <strong>Need Help?</strong>
+                <small>Get support</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+        <!-- NAVBAR -->
+        <header class="navbar">
+
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                <i data-lucide="menu"></i>
+            </button>
+
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="search" placeholder="Search anything...">
+            </div>
+
+            <div class="user-area">
+
+                <button class="notification" aria-label="Notifications">
+                    <i data-lucide="bell"></i>
+                    <span></span>
+                </button>
+
+                <!-- Filled from the logged-in user -->
+                <div class="avatar" id="profileAvatar">U</div>
+
+                <div class="user-info">
+                    <strong id="profileName">Your Name</strong>
+                    <small id="profileBusiness">Set up your business</small>
+                </div>
+
+                <i data-lucide="chevron-down" class="chevron"></i>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- PAGE TITLE + ILLUSTRATION -->
+            <section class="page-heading">
+
+                <div class="heading-copy">
+                    <span class="heading-badge">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="5" y="4.5" width="14" height="17" rx="2.5"/>
+                            <path d="M9.5 4.5V2.8h5v1.7M9 11h6M9 14.5h6"/>
+                            <path d="M12 8.2v.01"/>
+                        </svg>
+                    </span>
+
+                    <div>
+                        <h1>Battery Runtime Estimator</h1>
+                        <p>Estimate how long your battery can power essential equipment.</p>
+                    </div>
+                </div>
+
+                <!-- faint battery + leaves illustration (decorative) -->
+                <svg class="banner-art" viewBox="0 0 400 130" aria-hidden="true" preserveAspectRatio="xMaxYMid meet">
+                    <path d="M40 112c-18-8-26-30-20-52 22 4 36 20 40 44z" fill="#cdeacf" opacity=".8"/>
+                    <path d="M62 104c-4-22 4-40 24-52 6 22-2 42-24 52z" fill="#bfe3c4" opacity=".8"/>
+                    <rect x="124" y="30" width="108" height="92" rx="14" fill="#d3ecd6" opacity=".9"/>
+                    <rect x="152" y="14" width="52" height="22" rx="7" fill="#c3e5c8"/>
+                    <rect x="136" y="48" width="84" height="64" rx="8" fill="#e5f6e7"/>
+                    <path d="M190 52l-24 34h16l-6 26 30-40h-17z" fill="#b9e0c0"/>
+                    <path d="M262 112c4-34 22-60 62-82 4 36-14 68-62 82z" fill="#cdeacf" opacity=".85"/>
+                    <path d="M262 112c14-26 34-46 58-62" stroke="#e5f6e7" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M330 100c4-24 18-42 44-54 2 26-12 46-44 54z" fill="#bfe3c4" opacity=".8"/>
+                    <path d="M0 118h400" stroke="#d6ecd9" stroke-width="3"/>
+                </svg>
+
+                <div class="date-filter">
+                    <i data-lucide="calendar-days"></i>
+
+                    <select id="periodFilter" aria-label="Date range">
+                        <option value="30d">Last 30 Days</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+
+            </section>
+
+
+            <!-- SHOWN WHEN THE USER DID NOT CHOOSE A BATTERY / INVERTER AT SETUP -->
+            <section class="not-enabled" id="notEnabled" hidden>
+                <i data-lucide="battery-charging"></i>
+                <h2>Battery estimator isn't switched on</h2>
+                <p>You didn't select an inverter or battery as a power source for your business.
+                   Add it in Settings to estimate how long your battery can run your equipment.</p>
+                <a href="settings.html" class="primary-link">
+                    Update power sources <i data-lucide="arrow-right"></i>
+                </a>
+            </section>
+
+
+            <div id="batteryContent">
+
+                <!-- TOP: FORM + RESULT -->
+                <section class="estimator-layout">
+
+                    <!-- ENTER DETAILS -->
+                    <form class="panel details-card" id="batteryForm" novalidate>
+
+                        <div class="section-heading">
+                            <span class="step-number">1</span>
+                            <div>
+                                <h2>Enter Battery &amp; Load Details</h2>
+                                <p>Provide your battery specifications and connected load.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-columns">
+
+                            <!-- LEFT COLUMN -->
+                            <div class="form-col">
+
+                                <h3 class="block-title"><span><i data-lucide="battery-full"></i></span> Battery Information</h3>
+
+                                <div class="form-group">
+                                    <label for="voltage">Battery Voltage (V) <b class="req">*</b></label>
+                                    <div class="unit-field">
+                                        <input type="number" id="voltage" min="1" step="any" placeholder="e.g. 24" required>
+                                        <span class="unit">V</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="capacity">Battery Capacity (Ah) <b class="req">*</b></label>
+                                    <div class="unit-field">
+                                        <input type="number" id="capacity" min="1" step="any" placeholder="e.g. 200" required>
+                                        <span class="unit">Ah</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="chemistry">Battery Chemistry</label>
+                                    <div class="field select-field">
+                                        <i data-lucide="battery-medium" class="field-icon"></i>
+                                        <select id="chemistry">
+                                            <option value="Lithium-Ion">Lithium-Ion</option>
+                                            <option value="LiFePO4">LiFePO4</option>
+                                            <option value="Lead-Acid (Tubular)">Lead-Acid (Tubular)</option>
+                                            <option value="Lead-Acid (Gel/AGM)">Lead-Acid (Gel/AGM)</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" class="select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="configuration">Battery Configuration</label>
+                                    <div class="field select-field">
+                                        <i data-lucide="layout-grid" class="field-icon"></i>
+                                        <select id="configuration">
+                                            <option value="1">1 Battery</option>
+                                            <option value="2">2 Batteries</option>
+                                            <option value="3">3 Batteries</option>
+                                            <option value="4">4 Batteries</option>
+                                            <option value="6">6 Batteries</option>
+                                            <option value="8">8 Batteries</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" class="select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <h3 class="block-title load-title"><span><i data-lucide="plug"></i></span> Connected Load</h3>
+
+                                <div class="form-group">
+                                    <label for="load">Total Load (Watts) <b class="req">*</b></label>
+                                    <div class="unit-field">
+                                        <input type="number" id="load" min="1" step="any" placeholder="e.g. 400" required>
+                                        <span class="unit">W</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- RIGHT COLUMN -->
+                            <div class="form-col assumptions-col">
+
+                                <h3 class="block-title"><span><i data-lucide="settings"></i></span> Assumptions</h3>
+
+                                <div class="form-group">
+                                    <label for="dod">Depth of Discharge (DoD)</label>
+                                    <div class="field select-field plain">
+                                        <select id="dod">
+                                            <option value="100">100%</option>
+                                            <option value="90">90%</option>
+                                            <option value="80" selected>80%</option>
+                                            <option value="70">70%</option>
+                                            <option value="60">60%</option>
+                                            <option value="50">50%</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" class="select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="health">Battery Health Factor</label>
+                                    <div class="field select-field plain">
+                                        <select id="health">
+                                            <option value="100" selected>100%</option>
+                                            <option value="90">90%</option>
+                                            <option value="80">80%</option>
+                                            <option value="70">70%</option>
+                                            <option value="60">60%</option>
+                                            <option value="50">50%</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" class="select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="efficiency">Inverter Efficiency</label>
+                                    <div class="field select-field plain">
+                                        <select id="efficiency">
+                                            <option value="98">98%</option>
+                                            <option value="95">95%</option>
+                                            <option value="90" selected>90%</option>
+                                            <option value="85">85%</option>
+                                            <option value="80">80%</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" class="select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="calc-btn" id="calcBtn">
+                                    <i data-lucide="calculator"></i>
+                                    Calculate Runtime
+                                    <i data-lucide="arrow-right"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+
+                    <!-- RESULT -->
+                    <div class="panel result-card">
+
+                        <div class="result-header">
+                            <span class="check-circle"><i data-lucide="check"></i></span>
+                            <h2>Estimated Battery Runtime</h2>
+                        </div>
+
+                        <div class="result-body">
+
+                            <div class="ring" id="ring">
+                                <div class="ring-inner">
+                                    <i data-lucide="battery-full"></i>
+                                    <strong id="runtimeHours">— hrs</strong>
+                                    <small id="runtimeMins">Enter your details to calculate</small>
+                                </div>
+                            </div>
+
+                            <div class="result-stats">
+
+                                <div class="stat">
+                                    <span class="stat-icon"><i data-lucide="zap"></i></span>
+                                    <p>
+                                        <small>Connected Load</small>
+                                        <strong id="statLoad">—</strong>
+                                    </p>
+                                </div>
+
+                                <div class="stat">
+                                    <span class="stat-icon boxed"><i data-lucide="battery-full"></i></span>
+                                    <p>
+                                        <small>Usable Energy</small>
+                                        <strong id="statEnergy">—</strong>
+                                    </p>
+                                </div>
+
+                                <div class="stat">
+                                    <span class="stat-icon round"><i data-lucide="info"></i></span>
+                                    <p>
+                                        <small>Status</small>
+                                        <em class="status-pill" id="statStatus">Not calculated</em>
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="note-box">
+                            <span class="note-icon"><i data-lucide="lightbulb"></i></span>
+                            <div>
+                                <h3>Important Note</h3>
+                                <p>This is an estimate based on the assumptions above. Actual runtime may vary depending on usage conditions and battery health.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- BOTTOM: 3 PANELS -->
+                <section class="bottom-grid">
+
+                    <!-- QUICK REFERENCE -->
+                    <div class="panel quick-card">
+
+                        <h2 class="panel-title"><span class="title-icon"><i data-lucide="chart-column"></i></span> Runtime Quick Reference</h2>
+
+                        <table class="ref-table">
+                            <thead>
+                                <tr>
+                                    <th>Load (W)</th>
+                                    <th>Estimated Runtime</th>
+                                </tr>
+                            </thead>
+                            <tbody id="refBody">
+                                <tr data-load="200"><td>200 W</td><td>—</td></tr>
+                                <tr data-load="400"><td>400 W</td><td>—</td></tr>
+                                <tr data-load="600"><td>600 W</td><td>—</td></tr>
+                                <tr data-load="800"><td>800 W</td><td>—</td></tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+                    <!-- KEY FACTORS -->
+                    <div class="panel factors-card">
+
+                        <h2 class="panel-title"><span class="title-icon solid"><i data-lucide="shield-check"></i></span> Key Factors That Affect Runtime</h2>
+
+                        <ul class="check-list">
+                            <li><i data-lucide="circle-check"></i> Battery capacity and age</li>
+                            <li><i data-lucide="circle-check"></i> Depth of discharge (DoD)</li>
+                            <li><i data-lucide="circle-check"></i> Inverter efficiency</li>
+                            <li><i data-lucide="circle-check"></i> Actual load variations</li>
+                        </ul>
+
+                        <svg class="factors-art" viewBox="0 0 180 140" aria-hidden="true">
+                            <ellipse cx="96" cy="128" rx="78" ry="9" fill="#cfe9d2" opacity=".7"/>
+                            <path d="M150 38c2-16 12-26 28-30 0 16-8 26-28 30z" fill="#b9e0bf"/>
+                            <path d="M150 52c0-14 6-24 8-34" stroke="#9fd2a8" stroke-width="2" fill="none"/>
+                            <rect x="30" y="52" width="130" height="74" rx="10" fill="#2fa04f"/>
+                            <rect x="30" y="52" width="130" height="18" rx="8" fill="#47b866"/>
+                            <rect x="44" y="40" width="24" height="14" rx="3" fill="#1d7a3a"/>
+                            <rect x="122" y="40" width="24" height="14" rx="3" fill="#1d7a3a"/>
+                            <path d="M99 76l-17 24h11l-4 18 20-27h-12z" fill="#eafbea"/>
+                        </svg>
+
+                    </div>
+
+
+                    <!-- TIPS -->
+                    <div class="panel tips-card">
+
+                        <h2 class="panel-title"><span class="title-icon plain"><i data-lucide="star"></i></span> Tips</h2>
+
+                        <ul class="check-list">
+                            <li><i data-lucide="circle-check"></i> Use realistic load values for accurate results.</li>
+                            <li><i data-lucide="circle-check"></i> Consider battery age and usage patterns.</li>
+                            <li><i data-lucide="circle-check"></i> Lower your load for longer runtime.</li>
+                            <li><i data-lucide="circle-check"></i> Keep your battery well maintained.</li>
+                        </ul>
+
+                        <svg class="tips-art" viewBox="0 0 90 100" aria-hidden="true">
+                            <path d="M70 96C58 66 62 36 88 8c8 34 0 64-18 88z" fill="#bfe5c5"/>
+                            <path d="M70 96C68 70 74 44 86 20" stroke="#e5f6e7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <path d="M40 98c-4-18 0-34 14-46 4 18-2 34-14 46z" fill="#d3ecd6"/>
+                        </svg>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <p class="footer-note">
+                PowerGuard · Smarter energy management for your business.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- NOTIFICATION MESSAGE -->
+<div class="toast" id="toast"></div>
+
+
+<script src="/frontend/JS/Battery.js"></script>
+
+</body>
+</html>
