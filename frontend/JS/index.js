@@ -118,7 +118,7 @@ login.addEventListener("submit", async function (event) {
 
     console.log("Authenticated user:", user.uid);
 
-    localStorage.setItem("powerguardUser", JSON.stringify({ fullName: user.displayName || "", email: user.email }));
+    
 
     window.location.href = "../HTML/dashbroad.html";
   } catch (error) {
@@ -183,7 +183,7 @@ signup.addEventListener("submit", async function (event) {
       displayName: fullName,
     });
 
-    localStorage.setItem("powerguardUser", JSON.stringify({ fullName: fullName, email: user.email }));
+    
 
     console.log("Registered user:", user.uid);
 
@@ -219,7 +219,6 @@ googleLogin.addEventListener("click", async function () {
 
     console.log("Google authenticated user:", user.uid);
 
-    localStorage.setItem("powerguardUser", JSON.stringify({ fullName: user.displayName || "", email: user.email }));
 
     const info = getAdditionalUserInfo(result);
 
@@ -246,7 +245,7 @@ googleLogin.addEventListener("click", async function () {
 // 7. FORGOT PASSWORD
 // ==============================
 
-forgotPassword.addEventListener("click", async function (event) {
+forgotPassword.localaddEventListener("click", async function (event) {
   event.preventDefault();
 
   const email = document.getElementById("loginEmail").value.trim();
