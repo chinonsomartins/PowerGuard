@@ -302,7 +302,7 @@ form.addEventListener("submit", async (event) => {
 
         console.error("Could not save business profile:", error);
 
-        showToast("Could not save to the server. Is the API running?");
+        showToast("Could not save: " + error.message);
 
         submitButton.disabled = false;
 
