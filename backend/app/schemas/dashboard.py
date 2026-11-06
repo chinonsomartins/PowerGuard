@@ -23,6 +23,9 @@ class DashboardSummary(CamelModel):
     cost_per_operating_hour: Optional[float] = None
     power_share_of_revenue_pct: Optional[float] = None
 
+    generator_hours: float = 0
+    generator_sessions: int = 0
+
 
 class TrendSeries(CamelModel):
     labels: List[str] = Field(default_factory=list)

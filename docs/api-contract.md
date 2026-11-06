@@ -64,11 +64,15 @@ camelCase. A new user receives zeros, empty arrays and nulls, which the page sho
   "business": {"powerSources": ["grid", "generator", "battery"]},
   "summary": {
     "totalExpenses": {"amount": 85000, "changePercent": 12},
-    "generatorFuel": {"amount": 35000, "changePercent": 8},
+    "generatorFuel": {"amount": 35000, 
+    "changePercent": 8},
     "gridElectricity": {"amount": 50000, "changePercent": 5},
     "batteryRuntimeHours": 3.6,
     "costPerOperatingHour": 600,
-    "powerShareOfRevenuePct": 15.0
+    "powerShareOfRevenuePct": 15.0,
+    "generatorHours": 4,
+    "generatorSessions": 1
+
   },
   "trend": {
     "weekly": {
