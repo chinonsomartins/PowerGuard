@@ -279,7 +279,11 @@ form.addEventListener("submit", async (event) => {
 
         const response = await fetch(`${API_BASE}/api/v1/business`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + await currentUser.getIdToken()
+
+            },
             body: JSON.stringify({
                 name: businessName,
                 type: businessCategory,
