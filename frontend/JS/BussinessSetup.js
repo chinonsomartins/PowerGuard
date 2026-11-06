@@ -1,3 +1,4 @@
+import { requireUser } from "./session.js";
 // ==========================================
 // POWERGUARD - BUSINESS SETUP JAVASCRIPT
 // ==========================================
@@ -22,33 +23,22 @@ const API_BASE = "http://127.0.0.1:8000";
 // ==========================================
 // 2. USER PROFILE (name + initials)
 // ==========================================
+let currentUser = null;
 
-// Single place that provides the logged-in user.
-// TODAY: reads what the login page saved in the browser.
-// LATER (backend/Firebase): replace the body of this function with
-//   the real call, e.g.  return await fetch("/api/me").then(r => r.json());
-// and keep the rest of the page exactly as it is.
-function getCurrentUser() {
+function getSavedUser() {
 
-    try {
-
-        const saved = localStorage.getItem("powerguardUser");
-
-        return saved ? JSON.parse(saved) : null;
-
-    } catch (error) {
-
+    if (!currentUser) {
         return null;
-
     }
+
+    return {
+        fullName: currentUser.displayName || (currentUser.email || "").split("@")[0],
+        email: currentUser.email
+    };
 
 }
 
 
-// "john doe"        -> "JD"
-// "Victory Okoro"   -> "VO"
-// "Mary Ann Smith"  -> "MS"  (first + last name)
-// "Victory"         -> "V"   (only one name)
 function getInitials(fullName) {
 
     const parts = fullName.trim().split(/\s+/).filter(Boolean);
@@ -69,8 +59,8 @@ function getInitials(fullName) {
 
 
 function renderProfile() {
-
-    const user = getCurrentUser();
+    
+    const user = getSavedUser();
 
     if (user && user.fullName) {
 
@@ -92,6 +82,8 @@ function renderProfile() {
     }
 
 }
+
+currentUser = await requireUser();
 
 renderProfile();
 
