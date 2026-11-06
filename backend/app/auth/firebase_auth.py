@@ -9,7 +9,7 @@ from firebase_admin import auth as firebase_auth
 _bearer = HTTPBearer(auto_error=False)
 
 
-def _ensure_firebase_app() -> None:
+def ensure_firebase_app() -> None:
     if not firebase_admin._apps:
         firebase_admin.initialize_app(
             options={"projectId": os.environ["FIREBASE_PROJECT_ID"]}
@@ -28,7 +28,7 @@ def get_current_uid(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    _ensure_firebase_app()
+    ensure_firebase_app()
 
     try:
         decoded = firebase_auth.verify_id_token(creds.credentials)
