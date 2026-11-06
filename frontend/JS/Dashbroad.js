@@ -18,7 +18,7 @@ import { requireUser } from "./session.js";
 // 1. SETTINGS
 // ==========================================
 
-const API_BASE_URL = ""; // e.g. "https://api.powerguard.com"
+const API_BASE_URL = "http://127.0.0.1:8000"; // e.g. "https://api.powerguard.com"
 
 const sidebar = document.getElementById("sidebar");
 const menuBtn = document.getElementById("menuBtn");
@@ -200,8 +200,19 @@ async function fetchDashboardData(range) {
   if (new URLSearchParams(location.search).get("demo") === "1") {
     return sampleDashboard();
   }
+  
+  const token = await currentUser.getIdToken();
 
-  return emptyDashboard();
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/dashboard?range=${range}`,
+    { headers: { Authorization: "Bearer " + token } },
+  );
+  
+  if (!response.ok) {
+    throw new Error("Dashboard request failed: " + response.status);
+  }
+  
+  return await response.json();
 }
 
 async function loadDashboard(range) {
