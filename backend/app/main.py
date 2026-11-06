@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import business, expenses, me
+from app.routers import business, expenses,generator, me
 
 app = FastAPI(title="PowerGuard API")
 
@@ -18,6 +18,8 @@ app.include_router(business.router)
 app.include_router(me.router)
 
 app.include_router(expenses.router)
+
+app.include_router(generator.router)
 
 @app.get("/health")
 def health():
