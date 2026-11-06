@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
+from app.auth.firebase_auth import get_current_uid
+
 from app.schemas.business import BusinessProfile
 
 router = APIRouter(prefix="/api/v1", tags=["business"])
@@ -7,12 +9,11 @@ router = APIRouter(prefix="/api/v1", tags=["business"])
 # TEMPORARY: in-memory storage and a fixed user.
 # Replaced by Firestore and the verified Firebase uid in the next steps.
 _profiles: dict[str, BusinessProfile] = {}
-TEMP_UID = "dev-user"
 
 
 @router.put("/business", response_model=BusinessProfile)
-def save_business(profile: BusinessProfile):
-    _profiles[TEMP_UID] = profile
+def save_business(profile: BusinessProfile, uid: str = Depends(get_current_uid)):
+    _profiles[uid] = profile
     return profile
 
 
