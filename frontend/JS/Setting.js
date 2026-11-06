@@ -1,186 +1,248 @@
-
 /* =========================================
-   POWERGUARD SETTINGS - M1 JAVASCRIPT
-========================================= */
+   POWERGUARD SETTINGS JAVASCRIPT
+=========================================
+
+   This page works on its own (no API yet). It shows what the user chose in
+   Business Setup, the same way the other pages do:
+
+   - name, email           <- "powerguardUser"          (saved by the login page)
+   - business name, category, location, power sources
+                           <- "powerguardBusinessSetup" (saved by Business Setup)
+
+   When the backend is ready, only the two small functions
+   readSavedUser() and readSavedBusiness() need to change.
+*/
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Initialize Lucide icons
-    if (window.lucide) {
-        lucide.createIcons();
+    const $ = (id) => document.getElementById(id);
+
+    // Same lists as the Business Setup page, so the two always match.
+    const SOURCES = [
+        { value: "grid", label: "Grid Electricity", icon: "utility-pole" },
+        { value: "generator", label: "Generator", icon: "plug-zap" },
+        { value: "battery", label: "Inverter / Battery", icon: "battery-charging" }
+    ];
+
+    const CATEGORIES = [
+        "Retail / Supermarket",
+        "Food / Restaurant",
+        "Salon / Barbing",
+        "Frozen Foods",
+        "Printing / Business Centre",
+        "Healthcare / Pharmacy",
+        "POS / Financial Services",
+        "Other"
+    ];
+
+    const toast = $("toast");
+    let toastTimer;
+
+
+    // =====================================
+    // 1. SAVED DETAILS
+    // =====================================
+
+    function readSavedUser() {
+
+        try {
+            return JSON.parse(localStorage.getItem("powerguardUser") || "null") || {};
+        } catch (error) {
+            return {};
+        }
+
+    }
+
+    function readSavedBusiness() {
+
+        try {
+            return JSON.parse(sessionStorage.getItem("powerguardBusinessSetup") || "null") || {};
+        } catch (error) {
+            return {};
+        }
+
+    }
+
+    const user = readSavedUser();
+    const saved = readSavedBusiness();
+
+    let profile = {
+        fullName: user.fullName || "",
+        email: user.email || "",
+        businessName: saved.businessName || "",
+        businessCategory: saved.businessCategory || "",
+        location: saved.location || "",
+        powerSources: Array.isArray(saved.powerSources) ? saved.powerSources : []
+    };
+
+    function saveBusiness() {
+
+        sessionStorage.setItem("powerguardBusinessSetup", JSON.stringify({
+            businessName: profile.businessName,
+            businessCategory: profile.businessCategory,
+            location: profile.location,
+            powerSources: profile.powerSources
+        }));
+
     }
 
 
     // =====================================
-    // ELEMENTS
+    // 2. HELPERS
     // =====================================
-
-    const sidebar = document.getElementById("sidebar");
-    const menuBtn = document.getElementById("menuBtn");
-    const closeSidebar = document.getElementById("closeSidebar");
-    const sidebarOverlay = document.getElementById("sidebarOverlay");
-
-    const profileModal = document.getElementById("profileModal");
-    const passwordModal = document.getElementById("passwordModal");
-
-    const editProfileBtn = document.getElementById("editProfileBtn");
-
-    const profileForm = document.getElementById("profileForm");
-    const passwordForm = document.getElementById("passwordForm");
-
-    const emailToggle = document.getElementById("emailToggle");
-    const appToggle = document.getElementById("appToggle");
-
-    const toast = document.getElementById("toast");
-
-
-    // =====================================
-    // BUSINESS PROFILE DATA
-    // =====================================
-
-    let businessProfile = {
-
-        name: "Victory Salon",
-
-        location: "Awka, Anambra State, Nigeria",
-
-        category: "Barbing Salon",
-
-        email: "victory.salon@example.com"
-
-    };
-
-
-    // =====================================
-    // TOAST NOTIFICATION
-    // =====================================
-
-    let toastTimer;
 
     function showToast(message) {
 
         toast.textContent = message;
-
         toast.classList.add("show");
 
         clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
 
-        toastTimer = setTimeout(function () {
+    }
 
-            toast.classList.remove("show");
+    function refreshIcons() {
 
-        }, 3000);
+        if (window.lucide) lucide.createIcons();
+
+    }
+
+    function showError(id, text) {
+
+        const box = $(id);
+
+        box.textContent = text || "";
+        box.hidden = !text;
+
+    }
+
+    // "John Doe" -> "JD"   "Mary Ann Smith" -> "MS"   "Victory" -> "V"
+    function getInitials(fullName) {
+
+        const parts = fullName.trim().split(/\s+/).filter(Boolean);
+
+        if (parts.length === 0) return "U";
+
+        const first = parts[0][0];
+        const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+
+        return (first + last).toUpperCase();
 
     }
 
 
     // =====================================
-    // MOBILE SIDEBAR
+    // 3. SHOW THE DETAILS
     // =====================================
 
-    function openSidebar() {
+    // the user area at the top (same as every other page)
+    function renderUserArea() {
 
-        sidebar.classList.add("open");
+        $("profileName").textContent = profile.fullName || "Your Name";
+        $("profileAvatar").textContent = profile.fullName ? getInitials(profile.fullName) : "U";
+        $("profileBusiness").textContent = profile.businessName || "Set up your business";
 
-        sidebarOverlay.classList.add("show");
+    }
+
+    // only the power sources the user selected, each with its own icon
+    function renderSources() {
+
+        const list = $("sourcesList");
+        const chosen = SOURCES.filter((s) => profile.powerSources.includes(s.value));
+
+        list.innerHTML = "";
+
+        chosen.forEach((source, index) => {
+
+            if (index > 0) {
+                const plus = document.createElement("i");
+                plus.setAttribute("data-lucide", "plus");
+                plus.className = "source-arrow";
+                list.appendChild(plus);
+            }
+
+            const item = document.createElement("div");
+            item.className = "source-item";
+
+            const circle = document.createElement("div");
+            circle.className = "source-icon";
+
+            const icon = document.createElement("i");
+            icon.setAttribute("data-lucide", source.icon);
+            circle.appendChild(icon);
+
+            const label = document.createElement("span");
+            label.textContent = source.label;
+
+            item.appendChild(circle);
+            item.appendChild(label);
+            list.appendChild(item);
+
+        });
+
+        list.hidden = chosen.length === 0;
+        $("noSources").hidden = chosen.length > 0;
+
+    }
+
+    function renderAll() {
+
+        const hasBusiness = !!profile.businessName;
+
+        $("displayBusinessName").textContent = profile.businessName || "No business added yet";
+        $("statusBadge").hidden = !hasBusiness;
+
+        $("displayLocation").textContent = profile.location || "No location added";
+        $("displayCategory").textContent = profile.businessCategory || "No category chosen";
+
+        $("displayEmail").textContent = profile.email || "—";
+
+        renderSources();
+        renderUserArea();
+        refreshIcons();
 
     }
 
 
-    function closeSidebarMenu() {
+    // =====================================
+    // 4. SIDEBAR (mobile)
+    // =====================================
 
-        sidebar.classList.remove("open");
+    const sidebar = $("sidebar");
+    const menuBtn = $("menuBtn");
 
-        sidebarOverlay.classList.remove("show");
+    menuBtn.addEventListener("click", () => sidebar.classList.toggle("open"));
 
-    }
+    document.addEventListener("click", (event) => {
 
-
-    if (menuBtn) {
-
-        menuBtn.addEventListener("click", openSidebar);
-
-    }
-
-
-    if (closeSidebar) {
-
-        closeSidebar.addEventListener("click", closeSidebarMenu);
-
-    }
-
-
-    if (sidebarOverlay) {
-
-        sidebarOverlay.addEventListener("click", closeSidebarMenu);
-
-    }
-
-
-    // Close sidebar when navigation links are clicked
-
-    document.querySelectorAll(".nav-link").forEach(function (link) {
-
-        link.addEventListener("click", closeSidebarMenu);
-
-    });
-
-
-    // Close sidebar if screen becomes desktop size
-
-    window.addEventListener("resize", function () {
-
-        if (window.innerWidth > 768) {
-
-            closeSidebarMenu();
-
+        if (
+            window.innerWidth <= 760 &&
+            sidebar.classList.contains("open") &&
+            !sidebar.contains(event.target) &&
+            !menuBtn.contains(event.target)
+        ) {
+            sidebar.classList.remove("open");
         }
 
     });
 
 
     // =====================================
-    // SETTINGS NAVIGATION
+    // 5. SETTINGS MENU (jump to a section)
     // =====================================
 
-    const settingsTabs = document.querySelectorAll(".settings-tab");
+    const tabs = document.querySelectorAll(".settings-tab");
 
-    settingsTabs.forEach(function (tab) {
+    tabs.forEach((tab) => {
 
-        tab.addEventListener("click", function () {
+        tab.addEventListener("click", () => {
 
-            // Remove active state from all tabs
-
-            settingsTabs.forEach(function (item) {
-
-                item.classList.remove("active");
-
-            });
-
-
-            // Activate clicked tab
-
+            tabs.forEach((item) => item.classList.remove("active"));
             tab.classList.add("active");
 
+            const section = $(tab.dataset.section);
 
-            // Find the section
-
-            const sectionId = tab.dataset.section;
-
-            const targetSection = document.getElementById(sectionId);
-
-
-            if (targetSection) {
-
-                targetSection.scrollIntoView({
-
-                    behavior: "smooth",
-
-                    block: "start"
-
-                });
-
-            }
+            if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
 
         });
 
@@ -188,95 +250,74 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================
-    // UPDATE BUSINESS PROFILE DISPLAY
+    // 6. EDIT BUSINESS PROFILE
     // =====================================
 
-    function updateBusinessDisplay() {
+    $("businessCategory").innerHTML =
+        '<option value="">Select category</option>' +
+        CATEGORIES.map((c) => `<option value="${c}">${c}</option>`).join("");
 
-        document.getElementById("displayBusinessName").textContent =
-            businessProfile.name;
+    $("sourceChoices").innerHTML = SOURCES.map((s) => `
+        <label class="source-choice">
+            <input type="checkbox" value="${s.value}">
+            <span class="choice-box">
+                <i data-lucide="${s.icon}"></i>
+                <b>${s.label}</b>
+                <em><i data-lucide="check"></i></em>
+            </span>
+        </label>
+    `).join("");
 
-        document.getElementById("displayLocation").textContent =
-            businessProfile.location;
+    $("editProfileBtn").addEventListener("click", () => {
 
-        document.getElementById("displayCategory").textContent =
-            businessProfile.category;
+        $("businessName").value = profile.businessName;
+        $("businessLocation").value = profile.location;
 
-        document.getElementById("navBusiness").textContent =
-            businessProfile.name;
+        const select = $("businessCategory");
 
-        document.getElementById("displayEmail").textContent =
-            businessProfile.email;
+        if (profile.businessCategory &&
+            ![...select.options].some((o) => o.value === profile.businessCategory)) {
+            select.add(new Option(profile.businessCategory, profile.businessCategory));
+        }
 
-    }
+        select.value = profile.businessCategory;
 
+        document.querySelectorAll("#sourceChoices input").forEach((box) => {
+            box.checked = profile.powerSources.includes(box.value);
+        });
 
-    // =====================================
-    // OPEN EDIT PROFILE MODAL
-    // =====================================
+        showError("profileError", "");
 
-    editProfileBtn.addEventListener("click", function () {
+        $("profileModal").classList.add("show");
 
-        document.getElementById("businessName").value =
-            businessProfile.name;
-
-        document.getElementById("businessLocation").value =
-            businessProfile.location;
-
-        document.getElementById("businessCategory").value =
-            businessProfile.category;
-
-        profileModal.classList.add("show");
+        refreshIcons();
 
     });
 
-
-    // =====================================
-    // SAVE BUSINESS PROFILE
-    // =====================================
-
-    profileForm.addEventListener("submit", function (event) {
+    $("profileForm").addEventListener("submit", (event) => {
 
         event.preventDefault();
 
+        const businessName = $("businessName").value.trim();
+        const businessCategory = $("businessCategory").value;
+        const location = $("businessLocation").value.trim();
 
-        const name =
-            document.getElementById("businessName").value.trim();
+        const powerSources = [...document.querySelectorAll("#sourceChoices input:checked")]
+            .map((box) => box.value);
 
-        const location =
-            document.getElementById("businessLocation").value.trim();
+        if (!businessName) return showError("profileError", "Please enter your business name.");
+        if (!businessCategory) return showError("profileError", "Please choose a business category.");
+        if (powerSources.length === 0) return showError("profileError", "Select at least one power source.");
 
-        const category =
-            document.getElementById("businessCategory").value;
+        profile.businessName = businessName;
+        profile.businessCategory = businessCategory;
+        profile.location = location;
+        profile.powerSources = powerSources;
 
+        saveBusiness();
+        renderAll();
 
-        if (!name || !location || !category) {
-
-            showToast("Please complete all business information.");
-
-            return;
-
-        }
-
-
-        // Update frontend profile data
-
-        businessProfile.name = name;
-
-        businessProfile.location = location;
-
-        businessProfile.category = category;
-
-
-        // Refresh page display
-
-        updateBusinessDisplay();
-
-
-        // Close modal
-
-        closeModal(profileModal);
-
+        $("profileModal").classList.remove("show");
 
         showToast("Business profile updated successfully!");
 
@@ -284,223 +325,99 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================
-    // OPEN PASSWORD MODAL
+    // 7. CHANGE PASSWORD (checks the form only; the real change comes with the backend)
     // =====================================
 
-    document.getElementById("changePasswordBtn")
-        .addEventListener("click", function () {
+    $("changePasswordBtn").addEventListener("click", () => {
 
-            passwordForm.reset();
+        $("passwordForm").reset();
+        showError("passwordError", "");
+        $("passwordModal").classList.add("show");
 
-            passwordModal.classList.add("show");
+    });
 
-        });
-
-
-    // =====================================
-    // PASSWORD VALIDATION
-    // =====================================
-
-    passwordForm.addEventListener("submit", function (event) {
+    $("passwordForm").addEventListener("submit", (event) => {
 
         event.preventDefault();
 
+        const current = $("currentPassword").value;
+        const next = $("newPassword").value;
+        const confirm = $("confirmPassword").value;
 
-        const currentPassword =
-            document.getElementById("currentPassword").value;
+        if (!current || !next || !confirm) return showError("passwordError", "Please complete all password fields.");
+        if (next.length < 8) return showError("passwordError", "Your new password must have at least 8 characters.");
+        if (next !== confirm) return showError("passwordError", "Your new passwords do not match.");
 
-        const newPassword =
-            document.getElementById("newPassword").value;
+        // Never store passwords in the browser. The real change is done by the backend later.
+        $("passwordModal").classList.remove("show");
+        $("passwordForm").reset();
 
-        const confirmPassword =
-            document.getElementById("confirmPassword").value;
-
-
-        if (!currentPassword || !newPassword || !confirmPassword) {
-
-            showToast("Please complete all password fields.");
-
-            return;
-
-        }
-
-
-        if (newPassword.length < 8) {
-
-            showToast("Password must contain at least 8 characters.");
-
-            return;
-
-        }
-
-
-        if (newPassword !== confirmPassword) {
-
-            showToast("Your new passwords do not match.");
-
-            return;
-
-        }
-
-
-        /*
-          FRONTEND M1 ONLY
-
-          Actual password changes must be handled
-          by the backend authentication system.
-
-          Do not store passwords in localStorage.
-        */
-
-        showToast(
-            "Validation successful. Backend connection is required to change your password."
-        );
-
-        closeModal(passwordModal);
-
-        passwordForm.reset();
+        showToast("Looks good. Changing the password will work once the backend is connected.");
 
     });
 
 
     // =====================================
-    // CLOSE MODALS
+    // 8. NOTIFICATION SWITCHES
+    // =====================================
+
+    const emailToggle = $("emailToggle");
+    const appToggle = $("appToggle");
+
+    const savedEmail = localStorage.getItem("pgEmailNotifications");
+    const savedApp = localStorage.getItem("pgAppNotifications");
+
+    if (savedEmail !== null) emailToggle.checked = savedEmail === "true";
+    if (savedApp !== null) appToggle.checked = savedApp === "true";
+
+    emailToggle.addEventListener("change", () => {
+
+        localStorage.setItem("pgEmailNotifications", emailToggle.checked);
+
+        showToast(emailToggle.checked ? "Email notifications enabled." : "Email notifications disabled.");
+
+    });
+
+    appToggle.addEventListener("change", () => {
+
+        localStorage.setItem("pgAppNotifications", appToggle.checked);
+
+        showToast(appToggle.checked ? "In-app notifications enabled." : "In-app notifications disabled.");
+
+    });
+
+
+    // =====================================
+    // 9. CLOSE MODALS
     // =====================================
 
     function closeModal(modal) {
-
         modal.classList.remove("show");
-
     }
 
-
-    document.querySelectorAll("[data-close]").forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            const modalId = button.dataset.close;
-
-            const modal = document.getElementById(modalId);
-
-            if (modal) {
-
-                closeModal(modal);
-
-            }
-
-        });
-
+    document.querySelectorAll("[data-close]").forEach((button) => {
+        button.addEventListener("click", () => closeModal($(button.dataset.close)));
     });
 
-
-    // Close when clicking outside modal
-
-    document.querySelectorAll(".modal-overlay").forEach(function (overlay) {
-
-        overlay.addEventListener("click", function (event) {
-
-            if (event.target === overlay) {
-
-                closeModal(overlay);
-
-            }
-
+    document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+        overlay.addEventListener("click", (event) => {
+            if (event.target === overlay) closeModal(overlay);
         });
-
     });
 
-
-    // Close modal using Escape
-
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener("keydown", (event) => {
 
         if (event.key === "Escape") {
-
-            document.querySelectorAll(".modal-overlay.show")
-                .forEach(function (modal) {
-
-                    closeModal(modal);
-
-                });
-
+            document.querySelectorAll(".modal-overlay.show").forEach(closeModal);
         }
 
     });
 
 
     // =====================================
-    // NOTIFICATION PREFERENCES
+    // 10. START
     // =====================================
 
-    // Load saved preferences
-
-    const savedEmail = localStorage.getItem("pgEmailNotifications");
-
-    const savedApp = localStorage.getItem("pgAppNotifications");
-
-
-    if (savedEmail !== null) {
-
-        emailToggle.checked = savedEmail === "true";
-
-    }
-
-
-    if (savedApp !== null) {
-
-        appToggle.checked = savedApp === "true";
-
-    }
-
-
-    // Email notifications
-
-    emailToggle.addEventListener("change", function () {
-
-        localStorage.setItem(
-            "pgEmailNotifications",
-            emailToggle.checked
-        );
-
-
-        showToast(
-
-            emailToggle.checked
-                ? "Email notifications enabled."
-                : "Email notifications disabled."
-
-        );
-
-    });
-
-
-    // In-app notifications
-
-    appToggle.addEventListener("change", function () {
-
-        localStorage.setItem(
-            "pgAppNotifications",
-            appToggle.checked
-        );
-
-
-        showToast(
-
-            appToggle.checked
-                ? "In-app notifications enabled."
-                : "In-app notifications disabled."
-
-        );
-
-    });
-
-
-    // =====================================
-    // INITIALIZE PAGE
-    // =====================================
-
-    updateBusinessDisplay();
-
-    console.log("PowerGuard Settings page loaded successfully.");
+    renderAll();
 
 });
