@@ -98,21 +98,29 @@ function formatDateTime(iso) {
 // TEMPORARY: reads what the login page saved in the browser.
 // The backend can instead send the user inside the dashboard response
 // (data.user) - that is used first when it exists.
+// The signed-in user comes from Firebase Auth (loaded by requireUser at the end of this file).
+let currentUser = null;
+
 function getSavedUser() {
-  try {
-    return JSON.parse(localStorage.getItem("powerguardUser") || "null");
-  } catch (error) {
+  if (!currentUser) {
     return null;
   }
+
+  return {
+    fullName:
+      currentUser.displayName || (currentUser.email || "").split("@")[0],
+    email: currentUser.email,
+  };
 }
 
+// Temporary: business setup saved in this tab (Firestore replaces this later).
 function getSavedSetup() {
-  let currentUser = null;
-
-  function getSavedUser() {
-    return currentUser
-      ? { fullName: currentUser.displayName || "", email: currentUser.email }
-      : null;
+  try {
+    return JSON.parse(
+      sessionStorage.getItem("powerguardBusinessSetup") || "null",
+    );
+  } catch (error) {
+    return null;
   }
 }
 
@@ -192,21 +200,6 @@ async function fetchDashboardData(range) {
   if (new URLSearchParams(location.search).get("demo") === "1") {
     return sampleDashboard();
   }
-
-  // ---------------------------------------------------------
-  // TODO (backend): replace the line below with the real call.
-  //
-  // const response = await fetch(
-  //     `${API_BASE_URL}/api/dashboard?range=${range}`,
-  //     { headers: { Authorization: "Bearer " + userToken } }
-  // );
-  //
-  // if (!response.ok) {
-  //     throw new Error("Dashboard request failed: " + response.status);
-  // }
-  //
-  // return await response.json();
-  // ---------------------------------------------------------
 
   return emptyDashboard();
 }
@@ -699,6 +692,8 @@ function sampleDashboard() {
 // ==========================================
 
 currentUser = await requireUser();
+
+console.log("Signed-in user:", currentUser.displayName, currentUser.email);
 
 loadDashboard(dateRange.value);
 

@@ -25,19 +25,20 @@ const API_BASE = "http://127.0.0.1:8000";
 // ==========================================
 let currentUser = null;
 
-function getCurrentUser() {
+function getSavedUser() {
 
-    return currentUser
-        ? { fullName: currentUser.displayName || "", email: currentUser.email }
-        : null;
+    if (!currentUser) {
+        return null;
+    }
+
+    return {
+        fullName: currentUser.displayName || (currentUser.email || "").split("@")[0],
+        email: currentUser.email
+    };
 
 }
 
 
-// "john doe"        -> "JD"
-// "Victory Okoro"   -> "VO"
-// "Mary Ann Smith"  -> "MS"  (first + last name)
-// "Victory"         -> "V"   (only one name)
 function getInitials(fullName) {
 
     const parts = fullName.trim().split(/\s+/).filter(Boolean);
@@ -59,9 +60,7 @@ function getInitials(fullName) {
 
 function renderProfile() {
     
-    currentUser = await requireUser();
-    
-    renderProfile();
+    const user = getSavedUser();
 
     if (user && user.fullName) {
 
@@ -83,6 +82,8 @@ function renderProfile() {
     }
 
 }
+
+currentUser = await requireUser();
 
 renderProfile();
 
