@@ -4,3 +4,4 @@ __pycache__/
 serviceAccount*.json
 .firebase/
 node_modules/
+frontend/dev/
