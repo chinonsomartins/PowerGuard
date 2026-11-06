@@ -701,31 +701,3 @@ loadDashboard(dateRange.value);
 // 16. PROFILE AREA -> BUSINESS SETUP
 // ==========================================
 
-const profileArea = document.querySelector(".profile");
-
-if (profileArea) {
-  profileArea.style.cursor = "pointer";
-  profileArea.setAttribute("role", "link");
-  profileArea.setAttribute("tabindex", "0");
-  profileArea.setAttribute("aria-label", "Open business profile");
-
-  const openBusinessSetup = () => {
-    window.location.href = "BussinessSetup.html";
-  };
-
-  profileArea.addEventListener("click", (event) => {
-    // The bell sits inside the same area, so ignore clicks on it
-    if (event.target.closest(".notification")) {
-      return;
-    }
-
-    openBusinessSetup();
-  });
-
-  profileArea.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openBusinessSetup();
-    }
-  });
-}
