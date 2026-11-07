@@ -10,7 +10,54 @@ import {
   sendPasswordResetEmail,
 } from "../firebase-config.js";
 
-import { getAdditionalUserInfo } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+// ==============================
+// ROUTING AFTER AUTHENTICATION
+// ==============================
+
+// ==============================
+// ROUTING AFTER AUTHENTICATION
+// ==============================
+
+const API_BASE_URL = "http://127.0.0.1:8000";
+
+async function redirectAfterLogin(user) {
+    const token = await user.getIdToken();
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/business`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    // No business profile: user needs onboarding.
+    if (response.status === 404) {
+        const errorData = await response.json();
+
+        if (errorData.detail === "Business profile not set") {
+            window.location.href = "../HTML/BussinessSetup.html";
+            return;
+        }
+
+        throw new Error("Unexpected response while checking business profile.");
+    }
+
+    // Any other unsuccessful response is a real error.
+    if (!response.ok) {
+        throw new Error(`Business profile check failed: ${response.status}`);
+    }
+
+    const business = await response.json();
+
+    // Existing user with a business profile.
+    if (business && business.name) {
+        window.location.href = "Dashbroad.html";
+        return;
+    }
+
+    // A successful response without a valid profile.
+    throw new Error("Business profile response is incomplete.");
+}
 
 // ==============================
 // 1. SELECT ELEMENTS
@@ -25,6 +72,9 @@ const signupForm = document.getElementById("signupForm");
 const createLink = document.getElementById("createLink");
 const promptText = document.getElementById("promptText");
 const promptAction = document.getElementById("promptAction");
+
+const googleLogin = document.getElementById("googleLogin");
+const forgotPassword = document.getElementById("forgotPassword");
 
 let mode = "login";
 
@@ -89,7 +139,7 @@ document.querySelectorAll(".toggle-password").forEach((button) => {
 // 4. LOGIN FORM SUBMISSION
 // ==============================
 
-login.addEventListener("submit", async function (event) {
+loginForm.querySelector("form").addEventListener("submit", async function (event) {
   event.preventDefault();
 
   const email = document.getElementById("loginEmail").value.trim();
@@ -103,7 +153,7 @@ login.addEventListener("submit", async function (event) {
   // Backend authentication will be connected here.
   // alert("Login interface working! Connect backend authentication next.");
 
-  const submitButton = login.querySelector('button[type="submit"]');
+  const submitButton = loginForm.querySelector('button[type="submit"]');
 
   submitButton.disabled = true;
 
@@ -120,10 +170,15 @@ login.addEventListener("submit", async function (event) {
 
     
 
-    window.location.href = "../HTML/dashbroad.html";
+    await redirectAfterLogin(user);
   } catch (error) {
     console.error("Login error:", error.code, error.message);
 
+
+    if (!error.code) {
+      alert("Signed in, but the app could not check your profile: " + error.message);
+      return;
+    }
     if (error.code === "auth/invalid-credential") {
       alert("Incorrect email or password.");
     } else if (error.code === "auth/user-not-found") {
@@ -142,7 +197,7 @@ login.addEventListener("submit", async function (event) {
 // 5. SIGNUP FORM SUBMISSION
 // ==============================
 
-signup.addEventListener("submit", async function (event) {
+signupForm.querySelector("form").addEventListener("submit", async function (event) {
   event.preventDefault();
 
   const password = document.getElementById("signupPassword").value;
@@ -166,7 +221,7 @@ signup.addEventListener("submit", async function (event) {
     return;
   }
 
-  const submitButton = signup.querySelector('button[type="submit"]');
+  const submitButton = signupForm.querySelector('button[type="submit"]');
 
   submitButton.disabled = true;
 
@@ -213,39 +268,38 @@ signup.addEventListener("submit", async function (event) {
 // ==============================
 
 googleLogin.addEventListener("click", async function () {
-  googleLogin.disabled = true;
+    googleLogin.disabled = true;
 
-  try {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
 
-    console.log("Google authenticated user:", user.uid);
+        const user = result.user;
 
+        console.log("Google authenticated user:", user.uid);
 
-    const info = getAdditionalUserInfo(result);
+        await redirectAfterLogin(user);
 
-    window.location.href = info && info.isNewUser
-      ? "BussinessSetup.html"
-      : "Dashbroad.html";
+    } catch (error) {
+        console.error("Google sign-in error:", error);
 
-  } catch (error) {
-    console.error("Google sign-in error:", error.code, error.message);
+        if (error.code === "auth/popup-closed-by-user") {
+            alert("Google sign-in was cancelled.");
+        } else if (error.code === "auth/popup-blocked") {
+            alert("Your browser blocked the Google sign-in popup.");
+        } else {
+            alert(error.message || "Google sign-in failed. Please try again.");
+        }
 
-    if (error.code === "auth/popup-closed-by-user") {
-      alert("Google sign-in was cancelled.");
-    } else if (error.code === "auth/popup-blocked") {
-      alert("Your browser blocked the Google sign-in popup.");
-    } else {
-      alert("Google sign-in failed. Please try again.");
+    } finally {
+        googleLogin.disabled = false;
     }
-  } finally {
-    googleLogin.disabled = false;
-  }
 });
 
 // ==============================
 // 7. FORGOT PASSWORD
 // ==============================
 
-forgotPassword.localaddEventListener("click", async function (event) {
+forgotPassword.addEventListener("click", async function (event) {
   event.preventDefault();
 
   const email = document.getElementById("loginEmail").value.trim();

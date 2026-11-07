@@ -312,13 +312,13 @@ form.addEventListener("submit", async (event) => {
 
        profileBusiness.textContent = businessName;
 
-    showToast("Business details saved! Taking you to your dashboard...");
+    showToast("Business details saved! Taking you to your Expense page...");
 
     console.log("PowerGuard Business Setup:", setupData);
 
     // Wait 1 second so the user can see the message, then go to the dashboard
     window.setTimeout(() => {
-        window.location.href = "Dashbroad.html";
+        window.location.href = "Expense.html";
     }, 1000);
 
 });

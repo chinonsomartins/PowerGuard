@@ -31,8 +31,9 @@ def get_current_uid(
     ensure_firebase_app()
 
     try:
-        decoded = firebase_auth.verify_id_token(creds.credentials)
-    except Exception:
+        decoded = firebase_auth.verify_id_token(creds.credentials, clock_skew_seconds=10)
+    except Exception as exc:
+        print("TOKEN VERIFY FAILED:", type(exc).__name__, "-", exc)
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             "Invalid or expired token",
