@@ -75,6 +75,16 @@ class FirestoreStore:
             for d in self._dated(collection, start, end, limit)
         ]
 
+        # ---- saved page inputs (battery profile, compare inputs) ----
+    def get_setting(self, uid: str, name: str) -> Optional[dict]:
+        snapshot = self._business_ref(uid).collection("settings").document(name).get()
+        return snapshot.to_dict() if snapshot.exists else None
+
+    def put_setting(self, uid: str, name: str, data: dict) -> dict:
+        self._business_ref(uid).collection("settings").document(name).set(
+            {**data, "updated_at": firestore.SERVER_TIMESTAMP}
+        )
+        return data
 
 @lru_cache(maxsize=1)
 def get_store() -> FirestoreStore:
