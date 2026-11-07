@@ -1,3 +1,5 @@
+import { requireUser } from "./session.js";
+
 /* =================================
    POWERGUARD EXPENSES JAVASCRIPT
 =================================
@@ -21,7 +23,9 @@
 // 1. SETTINGS & ELEMENTS
 // =================================
 
-const API_BASE_URL = "";                 // e.g. "https://api.powerguard.com"
+const API_BASE_URL = "http://127.0.0.1:8000";
+let currentUser = null; 
+
 const USE_BACKEND = API_BASE_URL !== "";
 const ROWS_BEFORE_FULL_HISTORY = 10;
 
@@ -132,11 +136,12 @@ function today() {
 
 function getSavedUser() {
 
-    try {
-        return JSON.parse(localStorage.getItem("powerguardUser") || "null");
-    } catch (error) {
-        return null;
-    }
+    return currentUser
+        ? {
+            fullName: currentUser.displayName || (currentUser.email || "").split("@")[0],
+            email: currentUser.email
+        }
+        : null;
 
 }
 
@@ -231,11 +236,11 @@ function localList(range) {
 // --- 4b. Real backend calls ----------------------------------------
 
 // TODO (backend): decide how the login token is stored and sent.
-function authHeaders() {
+async function authHeaders() {
 
-    const token = localStorage.getItem("powerguardToken");
+    const token = await currentUser.getIdToken();
 
-    return token ? { Authorization: "Bearer " + token } : {};
+    return { Authorization: "Bearer " + token };
 
 }
 
@@ -243,7 +248,7 @@ async function request(path, options = {}) {
 
     const response = await fetch(API_BASE_URL + path, {
         ...options,
-        headers: { ...authHeaders(), ...(options.headers || {}) }
+        headers: { ...(await authHeaders()), ...(options.headers || {}) }
     });
 
     if (!response.ok) {
@@ -252,7 +257,14 @@ async function request(path, options = {}) {
 
         try {
             const body = await response.json();
-            if (body.message) message = body.message;
+
+            if (typeof body.detail === "string") {
+                message = body.detail;
+            } else if (Array.isArray(body.detail)) {
+                message = body.detail
+                    .map((d) => d.loc.slice(1).join(".") + ": " + d.msg)
+                    .join("; ");
+            }
         } catch (error) { /* no JSON body */ }
 
         throw new Error(message);
@@ -267,74 +279,101 @@ const jsonHeaders = { "Content-Type": "application/json" };
 
 // --- 4c. The api object the page uses -------------------------------
 
+const SOURCE_TO_CATEGORY = {
+    grid: "Grid Electricity",
+    generator_fuel: "Generator",
+    inverter_battery: "Other",
+    other: "Other"
+};
+
+const CATEGORY_TO_SOURCE = {
+    "Grid Electricity": "grid",
+    "Generator": "generator_fuel",
+    "Other": "other"
+};
+
+const PROVENANCE_LABELS = {
+    manual: "Manual entry",
+    ai_extracted_confirmed: "AI extracted",
+    sample_demo: "Sample data",
+    simulated: "Simulated"
+};
+
+function fromApi(e) {
+
+    return {
+        id: e.id,
+        date: e.date,
+        amount: e.amount_ngn,
+        category: SOURCE_TO_CATEGORY[e.source] || "Other",
+        description: e.note,
+        source: PROVENANCE_LABELS[e.provenance] || "Manual entry"
+    };
+
+}
+
+async function loadProfile() {
+
+    try {
+        return await request("/api/v1/business");
+    } catch (error) {
+        return null;
+    }
+
+}
+
 const api = {
 
     // range = "7d" | "30d" | "90d" | "all"
     async list(range) {
 
-        if (!USE_BACKEND) return localList(range);
+        const items = await request("/api/v1/expenses?limit=500");
 
-        return request(`/api/expenses?range=${range}`);
+        let list = items.map(fromApi);
+
+        if (range !== "all") {
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - parseInt(range, 10));
+            list = list.filter((e) => new Date(e.date + "T00:00:00") >= cutoff);
+        }
+
+        const profile = await loadProfile();
+
+        return {
+            user: profile ? { fullName: "", businessName: profile.name } : null,
+            business: { powerSources: profile ? profile.power_sources : [] },
+            summary: buildSummary(list),
+            expenses: list
+        };
 
     },
 
-    // expense = { category, amount, date, description, receiptId? }
     async create(expense) {
 
-        if (!USE_BACKEND) {
-            localStore.expenses.push({ id: localStore.nextId++, source: "Confirmed", ...expense });
-            return;
-        }
-
-        return request("/api/expenses", {
+        return request("/api/v1/expenses", {
             method: "POST",
             headers: jsonHeaders,
-            body: JSON.stringify(expense)
+            body: JSON.stringify({
+                date: expense.date,
+                amount_ngn: expense.amount,
+                source: CATEGORY_TO_SOURCE[expense.category] || "other",
+                note: expense.description
+            })
         });
 
     },
 
-    async update(id, expense) {
-
-        if (!USE_BACKEND) {
-            localStore.expenses = localStore.expenses.map((e) =>
-                e.id === id ? { ...e, ...expense } : e);
-            return;
-        }
-
-        return request(`/api/expenses/${id}`, {
-            method: "PUT",
-            headers: jsonHeaders,
-            body: JSON.stringify(expense)
-        });
-
+    // Not built in the API yet.
+    async update() {
+        throw new Error("Editing expenses is not available yet.");
     },
 
-    async remove(id) {
-
-        if (!USE_BACKEND) {
-            localStore.expenses = localStore.expenses.filter((e) => e.id !== id);
-            return;
-        }
-
-        return request(`/api/expenses/${id}`, { method: "DELETE" });
-
+    async remove() {
+        throw new Error("Deleting expenses is not available yet.");
     },
 
-    // Sends the receipt image to the BACKEND, which calls Gemini.
-    // Never put the Gemini API key in this file - anyone could copy it.
-    // Returns { receiptId, category, amount, date, description }
-    async extractReceipt(file) {
-
-        if (!USE_BACKEND) {
-            throw new Error("Receipt extraction needs the backend (Gemini) to be connected.");
-        }
-
-        const formData = new FormData();
-        formData.append("receipt", file);
-
-        return request("/api/receipts/extract", { method: "POST", body: formData });
-
+    async extractReceipt() {
+        throw new Error("Receipt extraction is coming soon. Please add the expense manually.");
     }
 
 };
@@ -547,14 +586,6 @@ function renderTable() {
 
                     <button class="view-btn" data-action="view" data-id="${escapeHTML(expense.id)}" title="View">
                         <i data-lucide="eye"></i>
-                    </button>
-
-                    <button class="edit-btn" data-action="edit" data-id="${escapeHTML(expense.id)}" title="Edit">
-                        <i data-lucide="pencil"></i>
-                    </button>
-
-                    <button class="delete-btn" data-action="delete" data-id="${escapeHTML(expense.id)}" title="Delete">
-                        <i data-lucide="trash-2"></i>
                     </button>
 
                 </div>
@@ -1024,5 +1055,7 @@ document.addEventListener("click", (event) => {
 dateInput.value = today();
 
 refreshIcons();
+
+currentUser = await requireUser();
 
 loadExpenses();
