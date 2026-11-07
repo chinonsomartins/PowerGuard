@@ -1,3 +1,6 @@
+import { requireUser } from "./session.js";
+import { apiGet, apiPost } from "./api.js";
+
 /* =================================
    POWERGUARD GENERATOR JAVASCRIPT
 =================================
@@ -22,8 +25,7 @@
 // 1. SETTINGS & ELEMENTS
 // =================================
 
-const API_BASE_URL = "";                 // e.g. "https://api.powerguard.com"
-const USE_BACKEND = API_BASE_URL !== "";
+let currentUser = null;
 const ROWS_BEFORE_VIEW_ALL = 5;
 
 const sidebar = document.getElementById("sidebar");
@@ -138,11 +140,12 @@ function sessionCostPerHour(session) {
 
 function getSavedUser() {
 
-    try {
-        return JSON.parse(localStorage.getItem("powerguardUser") || "null");
-    } catch (error) {
-        return null;
-    }
+    return currentUser
+        ? {
+            fullName: currentUser.displayName || (currentUser.email || "").split("@")[0],
+            email: currentUser.email
+        }
+        : null;
 
 }
 
@@ -233,97 +236,71 @@ function localList(range) {
 
 }
 
-// --- 4b. Real backend calls ----------------------------------------
-
-// TODO (backend): decide how the login token is stored and sent.
-function authHeaders() {
-
-    const token = localStorage.getItem("powerguardToken");
-
-    return token ? { Authorization: "Bearer " + token } : {};
-
-}
-
-async function request(path, options = {}) {
-
-    const response = await fetch(API_BASE_URL + path, {
-        ...options,
-        headers: { ...authHeaders(), ...(options.headers || {}) }
-    });
-
-    if (!response.ok) {
-
-        let message = "Request failed (" + response.status + ")";
-
-        try {
-            const body = await response.json();
-            if (body.message) message = body.message;
-        } catch (error) { /* no JSON body */ }
-
-        throw new Error(message);
-
-    }
-
-    return response.status === 204 ? null : response.json();
-
-}
-
-const jsonHeaders = { "Content-Type": "application/json" };
 
 // --- 4c. The api object the page uses -------------------------------
+
+function fromApiSession(s) {
+
+    const litres = s.litres_consumed ?? ((s.litres_per_hour_assumed || 0) * s.duration_hours);
+
+    return {
+        id: s.id,
+        date: s.date,
+        fuelType: s.note || "Petrol",
+        fuelLitres: litres,
+        runtimeHours: s.duration_hours,
+        fuelPricePerLitre: s.fuel_price_ngn_per_l,
+        costPerHour: s.cost_per_hour_ngn
+    };
+
+}
 
 const api = {
 
     // range = "7d" | "30d" | "90d" | "all"
     async list(range) {
 
-        if (!USE_BACKEND) return localList(range);
+        const [profile, items] = await Promise.all([
+            apiGet("/api/v1/business"),
+            apiGet("/api/v1/generator-sessions?limit=500")
+        ]);
 
-        return request(`/api/generator?range=${range}`);
+        let sessions = (items || []).map(fromApiSession);
+
+        if (range !== "all") {
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - parseInt(range, 10));
+            sessions = sessions.filter((s) => new Date(s.date + "T00:00:00") >= cutoff);
+        }
+
+        return {
+            user: profile ? { fullName: "", businessName: profile.name } : null,
+            business: { powerSources: profile ? profile.power_sources : [] },
+            summary: buildSummary(sessions),
+            sessions: sessions
+        };
 
     },
 
-    // session = { date, fuelType, fuelLitres, runtimeHours, fuelPricePerLitre }
+    // The fuel type is stored in the session's note field.
     async create(session) {
 
-        if (!USE_BACKEND) {
-            localStore.sessions.push({ id: localStore.nextId++, ...session });
-            return;
-        }
-
-        return request("/api/generator/sessions", {
-            method: "POST",
-            headers: jsonHeaders,
-            body: JSON.stringify(session)
+        return apiPost("/api/v1/generator-sessions", {
+            date: session.date,
+            duration_hours: session.runtimeHours,
+            litres_consumed: session.fuelLitres,
+            fuel_price_ngn_per_l: session.fuelPricePerLitre,
+            note: session.fuelType
         });
 
     },
 
-    async update(id, session) {
-
-        if (!USE_BACKEND) {
-            localStore.sessions = localStore.sessions.map((s) =>
-                s.id === id ? { ...s, ...session } : s);
-            return;
-        }
-
-        return request(`/api/generator/sessions/${id}`, {
-            method: "PUT",
-            headers: jsonHeaders,
-            body: JSON.stringify(session)
-        });
-
+    async update() {
+        throw new Error("Editing sessions is not available yet.");
     },
 
-    async remove(id) {
-
-        if (!USE_BACKEND) {
-            localStore.sessions = localStore.sessions.filter((s) => s.id !== id);
-            return;
-        }
-
-        return request(`/api/generator/sessions/${id}`, { method: "DELETE" });
-
+    async remove() {
+        throw new Error("Deleting sessions is not available yet.");
     }
 
 };
@@ -501,14 +478,6 @@ function renderTable() {
 
                     <button data-action="view" data-id="${escapeHTML(session.id)}" title="View">
                         <i data-lucide="eye"></i>
-                    </button>
-
-                    <button data-action="edit" data-id="${escapeHTML(session.id)}" title="Edit">
-                        <i data-lucide="pencil"></i>
-                    </button>
-
-                    <button data-action="delete" data-id="${escapeHTML(session.id)}" title="Delete">
-                        <i data-lucide="trash-2"></i>
                     </button>
 
                 </div>
@@ -828,5 +797,7 @@ document.addEventListener("click", (event) => {
 sessionDate.value = today();
 
 refreshIcons();
+
+currentUser = await requireUser();
 
 loadGenerator();
