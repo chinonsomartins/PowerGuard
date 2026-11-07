@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -10,6 +10,11 @@ class BatteryEstimateRequest(BaseModel):
     n_parallel: int = Field(ge=1, le=16)
     load_w: float = Field(gt=0, le=100000)
     standby_w: float = Field(default=0, ge=0, le=5000)
+
+    chemistry: Optional[str] = Field(default=None, max_length=40)
+    usable_dod_percent: Optional[float] = Field(default=None, gt=0, le=100)
+    capacity_health_percent: Optional[float] = Field(default=None, gt=0, le=100)
+    inverter_efficiency_percent: Optional[float] = Field(default=None, gt=0, le=100)
 
 
 class RuntimeRange(BaseModel):
