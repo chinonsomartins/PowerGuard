@@ -1,3 +1,6 @@
+import { requireUser } from "./session.js";
+import { apiGet, apiPut } from "./api.js";
+
 /* =================================
    POWERGUARD BATTERY JAVASCRIPT
 =================================
@@ -25,8 +28,8 @@
 // 1. SETTINGS & ELEMENTS
 // =================================
 
-const API_BASE_URL = "";                 // e.g. "https://api.powerguard.com"
-const USE_BACKEND = API_BASE_URL !== "";
+let currentUser = null;
+const USE_BACKEND = true;
 
 const sidebar = document.getElementById("sidebar");
 const menuBtn = document.getElementById("menuBtn");
@@ -113,11 +116,12 @@ function hoursToText(hours) {
 
 function getSavedUser() {
 
-    try {
-        return JSON.parse(localStorage.getItem("powerguardUser") || "null");
-    } catch (error) {
-        return null;
-    }
+    return currentUser
+        ? {
+            fullName: currentUser.displayName || (currentUser.email || "").split("@")[0],
+            email: currentUser.email
+        }
+        : null;
 
 }
 
@@ -165,87 +169,58 @@ function renderProfile() {
 // 4. DATA LAYER  (backend developer: edit this section only)
 // =================================
 
-// --- 4a. Local mode (no backend yet) -------------------------------
 
-const localStore = { settings: null, lastEstimate: null };
+// --- 4c. The api object the page uses -------------------------------
 
-function localGet() {
-
-    const setup = getSavedSetup();
+function fromApiBattery(b) {
 
     return {
-        user: null,
-        business: { powerSources: setup && setup.powerSources ? setup.powerSources : [] },
-        settings: localStore.settings,
-        lastEstimate: localStore.lastEstimate
+        voltage: b.unit_voltage_v,
+        capacityAh: b.unit_capacity_ah,
+        chemistry: b.chemistry || undefined,
+        batteryCount: b.n_parallel,
+        dodPercent: b.usable_dod_percent ?? undefined,
+        healthPercent: b.capacity_health_percent ?? undefined,
+        efficiencyPercent: b.inverter_efficiency_percent ?? undefined,
+        loadWatts: b.load_w
     };
 
 }
 
-// --- 4b. Real backend calls ----------------------------------------
-
-// TODO (backend): decide how the login token is stored and sent.
-function authHeaders() {
-
-    const token = localStorage.getItem("powerguardToken");
-
-    return token ? { Authorization: "Bearer " + token } : {};
-
-}
-
-async function request(path, options = {}) {
-
-    const response = await fetch(API_BASE_URL + path, {
-        ...options,
-        headers: { ...authHeaders(), ...(options.headers || {}) }
-    });
-
-    if (!response.ok) {
-
-        let message = "Request failed (" + response.status + ")";
-
-        try {
-            const body = await response.json();
-            if (body.message) message = body.message;
-        } catch (error) { /* no JSON body */ }
-
-        throw new Error(message);
-
-    }
-
-    return response.status === 204 ? null : response.json();
-
-}
-
-// --- 4c. The api object the page uses -------------------------------
-
 const api = {
 
-    // range = "7d" | "30d" | "90d" | "all"  (optional for the backend)
-    async get(range) {
+    async get() {
 
-        if (!USE_BACKEND) return localGet();
+        const [profile, battery] = await Promise.all([
+            apiGet("/api/v1/business"),
+            apiGet("/api/v1/battery-profile")
+        ]);
 
-        return request(`/api/battery?range=${range}`);
+        return {
+            user: profile ? { fullName: "", businessName: profile.name } : null,
+            business: { powerSources: profile ? profile.power_sources : [] },
+            settings: battery ? fromApiBattery(battery) : null,
+            lastEstimate: null
+        };
 
     },
 
-    // payload = { settings: {...}, result: { runtimeHours, usableEnergyWh } }
+    // The bank is saved as one string of batteries in parallel (voltage x capacity x count).
     async saveEstimate(payload) {
 
-        if (!USE_BACKEND) {
-            localStore.settings = payload.settings;
-            localStore.lastEstimate = {
-                ...payload.result,
-                calculatedAt: new Date().toISOString()
-            };
-            return;
-        }
+        const s = payload.settings;
 
-        return request("/api/battery/estimate", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+        return apiPut("/api/v1/battery-profile", {
+            unit_voltage_v: s.voltage,
+            unit_capacity_ah: s.capacityAh,
+            n_series: 1,
+            n_parallel: s.batteryCount,
+            load_w: s.loadWatts,
+            standby_w: 0,
+            chemistry: s.chemistry,
+            usable_dod_percent: s.dodPercent,
+            capacity_health_percent: s.healthPercent,
+            inverter_efficiency_percent: s.efficiencyPercent
         });
 
     }
@@ -569,5 +544,7 @@ document.addEventListener("click", (event) => {
 // =================================
 
 refreshIcons();
+
+currentUser = await requireUser();
 
 loadBattery();
