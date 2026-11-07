@@ -1,4 +1,4 @@
-from app.calc.battery import runtime_range
+from app.calc.battery import bank_energy_wh, runtime_range
 
 ROUND_TRIP_EFFICIENCY = 0.80  # speculative starting value, shown to the user as an assumption
 
@@ -34,3 +34,15 @@ def compare_outage(outage_hours, load_w, standby_w=0.0, generator_litres_per_hou
         "This comparison is advisory, not a safety instruction.",
     ]
     return {"outage_hours": outage_hours, "scenarios": [generator, inverter], "assumptions": assumptions}
+
+def compare_from_request(req):
+    """Runs compare_outage from an OutageCompareRequest-shaped object."""
+    nominal = None
+    if req.unit_voltage_v is not None:
+        nominal = bank_energy_wh(req.unit_voltage_v, req.unit_capacity_ah, req.n_series, req.n_parallel)
+    return compare_outage(
+        outage_hours=req.outage_hours, load_w=req.load_w, standby_w=req.standby_w,
+        generator_litres_per_hour=req.generator_litres_per_hour,
+        fuel_price_ngn_per_l=req.fuel_price_ngn_per_l, nominal_wh=nominal,
+        grid_tariff_ngn_per_kwh=req.grid_tariff_ngn_per_kwh,
+    )
