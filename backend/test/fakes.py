@@ -9,7 +9,7 @@ class FakeStore:
     """In-memory stand-in for FirestoreStore, with the same method signatures."""
 
     def __init__(self):
-        self.profiles, self.expenses, self.sessions = {}, {}, {}
+        self.profiles, self.expenses, self.sessions, self.Setting = {}, {}, {}, {}
 
     def get_business(self, uid):
         return self.profiles.get(uid)
@@ -17,6 +17,13 @@ class FakeStore:
     def put_business(self, uid, profile):
         self.profiles[uid] = profile
         return profile
+
+    def get_setting(self, uid, name):
+        return self.Setting.get((uid, name))
+
+    def put_setting(self, uid, name, data):
+        self.Setting[(uid, name)] = data
+        return data
 
     @staticmethod
     def _in_range(item, start, end):
