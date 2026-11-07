@@ -58,3 +58,12 @@ def test_dashboard_uses_saved_battery_and_compare_inputs(api):
     assert body["summary"]["batteryRuntimeHours"] == 3.6
     assert body["insights"]["batteryLoadWatts"] == 600
     assert body["insights"]["bestOption"]["name"] == "Inverter"   # 600 vs 9,000 naira
+
+def test_dashboard_uses_the_users_own_battery_percentages(api):
+    client, _ = api
+    client.put("/api/v1/battery-profile", json={
+        "unit_voltage_v": 24, "unit_capacity_ah": 200, "n_series": 1, "n_parallel": 1,
+        "load_w": 400, "usable_dod_percent": 80, "capacity_health_percent": 100,
+        "inverter_efficiency_percent": 90})
+    body = client.get("/api/v1/dashboard").json()
+    assert body["summary"]["batteryRuntimeHours"] == 8.6   # 24 x 200 x 0.8 x 0.9 / 400 = 8.64  

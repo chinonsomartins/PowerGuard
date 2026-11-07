@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 
 from app.auth.firebase_auth import get_current_uid
-from app.calc.battery import bank_energy_wh, runtime_range
+from app.calc.battery import bank_energy_wh, runtime_hours, runtime_range
 from app.calc.comparison import compare_from_request
 from app.schemas.battery import BatteryEstimateRequest
 from app.schemas.compare import OutageCompareRequest
@@ -51,8 +51,21 @@ def dashboard(
     saved_battery = store.get_setting(uid, "battery_profile")
     if saved_battery:
         battery = BatteryEstimateRequest(**saved_battery)
-        nominal = bank_energy_wh(battery.unit_voltage_v, battery.unit_capacity_ah, battery.n_series, battery.n_parallel)
-        base_hours = round(runtime_range(nominal, battery.load_w, battery.standby_w)["base"], 1)
+        nominal = bank_energy_wh(
+            battery.unit_voltage_v, battery.unit_capacity_ah, battery.n_series, battery.n_parallel
+        )
+        if battery.usable_dod_percent and battery.inverter_efficiency_percent:
+            base = runtime_hours(
+                nominal,
+                battery.load_w,
+                battery.usable_dod_percent / 100,
+                battery.inverter_efficiency_percent / 100,
+                (battery.capacity_health_percent or 100) / 100,
+                battery.standby_w,
+            )
+        else:
+            base = runtime_range(nominal, battery.load_w, battery.standby_w)["base"]
+        base_hours = round(base, 1)
         result.summary.battery_runtime_hours = base_hours
         result.insights.battery_runtime_hours = base_hours
         result.insights.battery_load_watts = battery.load_w

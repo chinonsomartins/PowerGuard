@@ -136,11 +136,11 @@
         // 5. Log Out
         menu.querySelector("[data-logout]").addEventListener("click", async () => {
 
-            // if Firebase sign-in is switched on, sign out of it first
+            // Sign out of Firebase, otherwise the session survives and the next page signs you back in.
             try {
-                if (window.PG && PG.auth && PG.auth.enabled) {
-                    await PG.auth.signOut();
-                }
+                const { auth } = await import("../firebase-config.js");
+                const { signOut } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
+                await signOut(auth);
             } catch (error) {
                 console.error(error);
             }

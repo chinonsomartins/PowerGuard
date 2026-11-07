@@ -1,3 +1,6 @@
+import { requireUser } from "./session.js";
+import { apiGet, apiPut } from "./api.js";
+
 /* =================================
    POWERGUARD COMPARE JAVASCRIPT
 =================================
@@ -26,8 +29,7 @@
 // 1. SETTINGS & ELEMENTS
 // =================================
 
-const API_BASE_URL = "";                 // e.g. "https://api.powerguard.com"
-const USE_BACKEND = API_BASE_URL !== "";
+let currentUser = null;
 const DEMO = new URLSearchParams(location.search).get("demo") === "1";
 
 const sidebar = document.getElementById("sidebar");
@@ -41,6 +43,25 @@ const loadInput = document.getElementById("loadWatts");
 const hoursInput = document.getElementById("outageHours");
 const optGenerator = document.getElementById("optGenerator");
 const optInverter = document.getElementById("optInverter");
+
+const hoursGroup = hoursInput.closest(".form-group") || hoursInput.parentElement;
+const tariffGroup = hoursGroup.cloneNode(true);
+const tariffInput = tariffGroup.querySelector("input");
+const tariffLabel = tariffGroup.querySelector("label");
+
+tariffInput.id = "electricityPrice";
+tariffInput.name = "electricityPrice";
+tariffInput.value = "";
+tariffInput.placeholder = "e.g. 200";
+tariffInput.min = "0";
+tariffInput.step = "any";
+
+if (tariffLabel) {
+    tariffLabel.htmlFor = "electricityPrice";
+    tariffLabel.textContent = "Electricity price (₦ per kWh)";
+}
+
+hoursGroup.after(tariffGroup);
 
 const genCard = document.getElementById("genCard");
 const invCard = document.getElementById("invCard");
@@ -107,11 +128,12 @@ function hoursText(hours) {
 
 function getSavedUser() {
 
-    try {
-        return JSON.parse(localStorage.getItem("powerguardUser") || "null");
-    } catch (error) {
-        return null;
-    }
+    return currentUser
+        ? {
+            fullName: currentUser.displayName || (currentUser.email || "").split("@")[0],
+            email: currentUser.email
+        }
+        : null;
 
 }
 
@@ -159,104 +181,88 @@ function renderProfile() {
 // 4. DATA LAYER  (backend developer: edit this section only)
 // =================================
 
-// --- 4a. Local mode (no backend yet) -------------------------------
-
-function localGet() {
-
-    const setup = getSavedSetup();
-
-    const base = {
-        user: null,
-        business: { powerSources: setup && setup.powerSources ? setup.powerSources : [] },
-        inputs: {
-            defaultLoadWatts: null,
-            generator: null,
-            battery: null,
-            electricityPricePerKwh: null
-        },
-        lastRun: null
-    };
-
-    // ?demo=1 -> sample figures (these give the numbers in the design)
-    if (DEMO) {
-
-        base.inputs = {
-            defaultLoadWatts: 600,
-            generator: { litresPerHour: 1.5, fuelPricePerLitre: 1000 },
-            battery: {
-                voltage: 24, capacityAh: 200, batteryCount: 1,
-                dodPercent: 80, healthPercent: 100, efficiencyPercent: 90
-            },
-            electricityPricePerKwh: 450
-        };
-
-        base.lastRun = { loadWatts: 600, outageHours: 4 };
-
-    }
-
-    return base;
-
-}
-
-// --- 4b. Real backend calls ----------------------------------------
-
-// TODO (backend): decide how the login token is stored and sent.
-function authHeaders() {
-
-    const token = localStorage.getItem("powerguardToken");
-
-    return token ? { Authorization: "Bearer " + token } : {};
-
-}
-
-async function request(path, options = {}) {
-
-    const response = await fetch(API_BASE_URL + path, {
-        ...options,
-        headers: { ...authHeaders(), ...(options.headers || {}) }
-    });
-
-    if (!response.ok) {
-
-        let message = "Request failed (" + response.status + ")";
-
-        try {
-            const body = await response.json();
-            if (body.message) message = body.message;
-        } catch (error) { /* no JSON body */ }
-
-        throw new Error(message);
-
-    }
-
-    return response.status === 204 ? null : response.json();
-
-}
 
 // --- 4c. The api object the page uses -------------------------------
 
+async function loadGeneratorInputs() {
+
+    const items = (await apiGet("/api/v1/generator-sessions?limit=20")) || [];
+
+    let litres = 0;
+    let hours = 0;
+
+    items.forEach((s) => {
+        litres += s.litres_consumed ?? ((s.litres_per_hour_assumed || 0) * s.duration_hours);
+        hours += s.duration_hours;
+    });
+
+    if (!(hours > 0) || !(litres > 0)) return null;
+
+    // sessions come newest first, so the first price is the latest
+    return { litresPerHour: litres / hours, fuelPricePerLitre: items[0].fuel_price_ngn_per_l };
+
+}
+
 const api = {
 
-    // range = "7d" | "30d" | "90d" | "all"
-    // (used by the backend to average the generator's fuel use over that period)
-    async get(range) {
+    async get() {
 
-        if (!USE_BACKEND) return localGet();
+        if (DEMO) return localGet();
 
-        return request(`/api/compare?range=${range}`);
+        const [profile, battery, saved, generator] = await Promise.all([
+            apiGet("/api/v1/business"),
+            apiGet("/api/v1/battery-profile"),
+            apiGet("/api/v1/compare-inputs"),
+            loadGeneratorInputs()
+        ]);
+
+        return {
+            user: profile ? { fullName: "", businessName: profile.name } : null,
+            business: { powerSources: profile ? profile.power_sources : [] },
+            inputs: {
+                defaultLoadWatts: battery ? battery.load_w : null,
+                generator: generator,
+                battery: battery
+                    ? {
+                        voltage: battery.unit_voltage_v,
+                        capacityAh: battery.unit_capacity_ah,
+                        batteryCount: battery.n_parallel,
+                        dodPercent: battery.usable_dod_percent,
+                        healthPercent: battery.capacity_health_percent,
+                        efficiencyPercent: battery.inverter_efficiency_percent
+                    }
+                    : null,
+                electricityPricePerKwh: saved ? saved.grid_tariff_ngn_per_kwh : null
+            },
+            lastRun: saved ? { loadWatts: saved.load_w, outageHours: saved.outage_hours } : null
+        };
 
     },
 
-    // run = { loadWatts, outageHours, options, results, bestOption, estimatedSaving }
     async saveRun(run) {
 
-        if (!USE_BACKEND) return;
+        const g = data.inputs.generator;
+        const b = data.inputs.battery;
 
-        return request("/api/compare/runs", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(run)
-        });
+        const body = { outage_hours: run.outageHours, load_w: run.loadWatts, standby_w: 0 };
+
+        if (g) {
+            body.generator_litres_per_hour = Number(g.litresPerHour.toFixed(3));
+            body.fuel_price_ngn_per_l = g.fuelPricePerLitre;
+        }
+
+        if (data.inputs.electricityPricePerKwh > 0) {
+            body.grid_tariff_ngn_per_kwh = data.inputs.electricityPricePerKwh;
+        }
+
+        if (b) {
+            body.unit_voltage_v = b.voltage;
+            body.unit_capacity_ah = b.capacityAh;
+            body.n_series = 1;
+            body.n_parallel = b.batteryCount || 1;
+        }
+
+        return apiPut("/api/v1/compare-inputs", body);
 
     }
 
@@ -524,6 +530,10 @@ function renderAll() {
     renderProfile();
     applyAccess();
 
+    if (data.inputs && data.inputs.electricityPricePerKwh > 0) {
+        tariffInput.value = data.inputs.electricityPricePerKwh;
+    }
+
     // Remembered load / duration -> fill the form and show the result
     if (data.lastRun) {
 
@@ -569,6 +579,10 @@ form.addEventListener("submit", async (event) => {
         showToast("Select at least one option to compare.");
         return;
     }
+
+    const tariff = Number(tariffInput.value);
+
+    data.inputs.electricityPricePerKwh = tariff > 0 ? tariff : null;
 
     const { gen, inv, outcome, useGen, useInv } = runComparison(load, hours);
 
@@ -647,5 +661,7 @@ document.addEventListener("click", (event) => {
 // =================================
 
 refreshIcons();
+
+currentUser = await requireUser();
 
 loadCompare();
