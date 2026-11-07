@@ -51,7 +51,7 @@ async function redirectAfterLogin(user) {
 
     // Existing user with a business profile.
     if (business && business.name) {
-        window.location.href = "Dashboard.html";
+        window.location.href = "Dashbroad.html";
         return;
     }
 
@@ -174,6 +174,11 @@ loginForm.querySelector("form").addEventListener("submit", async function (event
   } catch (error) {
     console.error("Login error:", error.code, error.message);
 
+
+    if (!error.code) {
+      alert("Signed in, but the app could not check your profile: " + error.message);
+      return;
+    }
     if (error.code === "auth/invalid-credential") {
       alert("Incorrect email or password.");
     } else if (error.code === "auth/user-not-found") {
