@@ -18,7 +18,7 @@ import {
 // ROUTING AFTER AUTHENTICATION
 // ==============================
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+import { API_BASE_URL } from "./api-base.js";
 
 async function redirectAfterLogin(user) {
     const token = await user.getIdToken();
