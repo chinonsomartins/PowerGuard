@@ -17,7 +17,7 @@ const profileAvatar = document.getElementById("profileAvatar");
 const profileBusiness = document.getElementById("profileBusiness");
 const businessNameInput = document.getElementById("businessName");
 
-const API_BASE = "http://127.0.0.1:8000";
+import { API_BASE_URL } from "./api-base.js";
 
 
 // ==========================================

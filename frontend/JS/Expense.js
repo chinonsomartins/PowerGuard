@@ -23,7 +23,7 @@ import { requireUser } from "./session.js";
 // 1. SETTINGS & ELEMENTS
 // =================================
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+import { API_BASE_URL } from "./api-base.js";
 let currentUser = null; 
 
 const USE_BACKEND = API_BASE_URL !== "";

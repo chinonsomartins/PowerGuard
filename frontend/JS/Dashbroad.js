@@ -18,7 +18,7 @@ import { requireUser } from "./session.js";
 // 1. SETTINGS
 // ==========================================
 
-const API_BASE_URL = "http://127.0.0.1:8000"; // e.g. "https://api.powerguard.com"
+import { API_BASE_URL } from "./api-base.js"; // e.g. "https://api.powerguard.com"
 
 const sidebar = document.getElementById("sidebar");
 const menuBtn = document.getElementById("menuBtn");
