@@ -1,7 +1,11 @@
 import os
+import json
+
 from typing import Optional
 
 import firebase_admin
+
+from firebase_admin import credentials
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth as firebase_auth
@@ -10,10 +14,14 @@ _bearer = HTTPBearer(auto_error=False)
 
 
 def ensure_firebase_app() -> None:
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(
-            options={"projectId": os.environ["FIREBASE_PROJECT_ID"]}
-        )
+    if firebase_admin._apps:
+        return
+    options = {"projectId": os.environ["FIREBASE_PROJECT_ID"]}
+    raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if raw:
+        firebase_admin.initialize_app(credentials.Certificate(json.loads(raw)), options)
+    else:
+        firebase_admin.initialize_app(options=options)
 
 
 def get_current_uid(

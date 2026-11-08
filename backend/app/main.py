@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,9 +8,11 @@ from app.routers import business, expenses,generator, dashboard, calc,Setting, m
 
 app = FastAPI(title="PowerGuard API")
 
+EXTRA_ORIGINS = [o.strip() for o in os.environ.get("EXTRA_ORIGINS", "").split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"],
+        allow_origins=["http://127.0.0.1:5500", "http://localhost:5500", *EXTRA_ORIGINS],
     allow_methods=["*"],
     allow_headers=["*"]
 )
