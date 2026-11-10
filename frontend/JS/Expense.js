@@ -1,4 +1,5 @@
 import { requireUser } from "./session.js";
+import { API_BASE_URL } from "./api-base.js";
 
 /* =================================
    POWERGUARD EXPENSES JAVASCRIPT
@@ -23,7 +24,7 @@ import { requireUser } from "./session.js";
 // 1. SETTINGS & ELEMENTS
 // =================================
 
-import { API_BASE_URL } from "./api-base.js";
+
 let currentUser = null; 
 
 const USE_BACKEND = API_BASE_URL !== "";
