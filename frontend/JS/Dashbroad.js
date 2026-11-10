@@ -1,4 +1,5 @@
 import { requireUser } from "./session.js";
+import { API_BASE_URL } from "./api-base.js";
 
 // ==========================================
 // POWERGUARD - DASHBOARD (OVERVIEW) JAVASCRIPT
@@ -17,8 +18,6 @@ import { requireUser } from "./session.js";
 // ==========================================
 // 1. SETTINGS
 // ==========================================
-
-import { API_BASE_URL } from "./api-base.js"; // e.g. "https://api.powerguard.com"
 
 const sidebar = document.getElementById("sidebar");
 const menuBtn = document.getElementById("menuBtn");
@@ -711,4 +710,13 @@ loadDashboard(dateRange.value);
 // ==========================================
 // 16. PROFILE AREA -> BUSINESS SETUP
 // ==========================================
+
+// "Go to Calculator" opens the comparison page.
+const calculatorButton = document.querySelector(".promo-card button");
+
+if (calculatorButton) {
+  calculatorButton.addEventListener("click", () => {
+    window.location.href = "Compare.html";
+  });
+}
 
