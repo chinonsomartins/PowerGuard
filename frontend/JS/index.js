@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "./api-base.js";
 // update code
 
 import {
@@ -18,7 +19,6 @@ import {
 // ROUTING AFTER AUTHENTICATION
 // ==============================
 
-import { API_BASE_URL } from "./api-base.js";
 
 async function redirectAfterLogin(user) {
     const token = await user.getIdToken();
