@@ -1,0 +1,46 @@
+.pg-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .pg-bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 900;
+    background: #ffffff;
+    border-top: 1px solid #dbe7de;
+    box-shadow: 0 -4px 16px rgba(7, 90, 43, 0.08);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .pg-bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 2px;
+    border-radius: 10px;
+    color: #5b6b60;
+    text-decoration: none;
+    font: 600 10px/1.2 "Inter", sans-serif;
+  }
+
+  .pg-bottom-nav a svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pg-bottom-nav a.active {
+    color: #075a2b;
+    background: #e8f5ec;
+  }
+
+  /* keep page content from hiding behind the bar */
+  body {
+    padding-bottom: 76px;
+  }
+}
