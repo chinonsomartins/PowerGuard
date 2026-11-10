@@ -1,4 +1,5 @@
 import { requireUser } from "./session.js";
+import { API_BASE_URL as API_BASE } from "./api-base.js";
 // ==========================================
 // POWERGUARD - BUSINESS SETUP JAVASCRIPT
 // ==========================================
@@ -16,9 +17,6 @@ const profileName = document.getElementById("profileName");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileBusiness = document.getElementById("profileBusiness");
 const businessNameInput = document.getElementById("businessName");
-
-import { API_BASE_URL } from "./api-base.js";
-
 
 // ==========================================
 // 2. USER PROFILE (name + initials)
